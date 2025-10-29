@@ -1,0 +1,106 @@
+{% extends "admin/base_site.html" %}
+{% load static %}
+
+{% block title %}Panel de Control | TallerYa{% endblock %}
+
+{% block content %}
+<div class="container-fluid mt-4">
+
+  <h2 class="mb-4 text-primary">📊 Panel General del Taller</h2>
+
+  <!-- Tarjetas -->
+  <div class="row text-center">
+    <div class="col-md-4 mb-4">
+      <div class="card text-white bg-primary shadow">
+        <div class="card-body">
+          <h4>👤 Clientes</h4>
+          <h2>{{ clientes_count }}</h2>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4 mb-4">
+      <div class="card text-white bg-success shadow">
+        <div class="card-body">
+          <h4>🗓️ Citas</h4>
+          <h2>{{ citas_count }}</h2>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4 mb-4">
+      <div class="card text-white bg-info shadow">
+        <div class="card-body">
+          <h4>🧑‍🔧 Usuarios</h4>
+          <h2>{{ usuarios_count }}</h2>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="my-4">
+
+  <!-- Primer gráfico -->
+  <div class="card shadow-sm mb-4">
+    <div class="card-body">
+      <h4 class="text-secondary mb-3">📈 Resumen General</h4>
+      <canvas id="chart1" height="90"></canvas>
+    </div>
+  </div>
+
+  <!-- Segundo gráfico -->
+  <div class="card shadow-sm">
+    <div class="card-body">
+      <h4 class="text-secondary mb-3">📅 Citas por Mes</h4>
+      <canvas id="chart2" height="120"></canvas>
+    </div>
+  </div>
+
+  <div class="mt-4 text-center">
+    <a href="/admin/clientes/cliente/" class="btn btn-primary mx-2">👤 Ver Clientes</a>
+    <a href="/admin/citas/cita/" class="btn btn-success mx-2">🗓️ Ver Citas</a>
+    <a href="/admin/usuarios/usuario/" class="btn btn-info mx-2">🧑‍🔧 Ver Usuarios</a>
+  </div>
+
+</div>
+
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+  // Primer gráfico: resumen total
+  const ctx1 = document.getElementById('chart1').getContext('2d');
+  new Chart(ctx1, {
+    type: 'bar',
+    data: {
+      labels: ['Clientes', 'Citas', 'Usuarios'],
+      datasets: [{
+        label: 'Cantidad',
+        data: [{{ clientes_count }}, {{ citas_count }}, {{ usuarios_count }}],
+        backgroundColor: ['#007bff', '#28a745', '#17a2b8']
+      }]
+    },
+    options: { scales: { y: { beginAtZero: true } } }
+  });
+
+  // Segundo gráfico: Citas por mes
+  const ctx2 = document.getElementById('chart2').getContext('2d');
+  new Chart(ctx2, {
+    type: 'line',
+    data: {
+      labels: {{ meses|safe }},
+      datasets: [{
+        label: 'Citas registradas',
+        data: {{ valores|safe }},
+        borderColor: '#28a745',
+        backgroundColor: 'rgba(40, 167, 69, 0.2)',
+        fill: true,
+        tension: 0.3
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: { legend: { display: false } },
+      scales: { y: { beginAtZero: true } }
+    }
+  });
+</script>
+
+{% endblock %}

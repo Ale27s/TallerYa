@@ -4,6 +4,8 @@ import Sidebar from "../components/Sidebar";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
+
+
 function Dashboard() {
   const navigate = useNavigate();
   const user = JSON.parse(localStorage.getItem("user"));
@@ -27,7 +29,9 @@ function Dashboard() {
 }, []);
 
   return (
-    <div className="dashboard-container">
+    <div className="dashboard-container mt-5">
+
+      
       
       <div className="main-content d-flex">
        

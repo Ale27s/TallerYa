@@ -1,38 +1,216 @@
-.App {
-  text-align: center;
+/* Animaciones del sidebar */
+.slide-in {
+  transform: translateX(0);
+}
+.slide-out {
+  transform: translateX(-260px);
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+/* Transiciones suaves */
+.navbar,
+.sidebar,
+.card {
+  transition: all 0.3s ease-in-out;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+/* Hover rojo */
+.nav-link:hover {
+  color: #c70000 !important;
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+/* Tarjetas del Dashboard */
+.stat-card {
+  border-top: 4px solid #c70000 !important;
+  transition: transform 0.3s ease;
+}
+.stat-card:hover {
+  transform: translateY(-5px);
+}
+
+/* Tema oscuro personalizado */
+[data-bs-theme="dark"] {
+  background-color: #121212;
+  color: #f5f5f5;
+}
+[data-bs-theme="dark"] .card {
+  background-color: #1e1e1e;
+  border: 1px solid #2c2c2c;
+}
+
+/* ==============================
+   🔧 ANIMATED LOADER TallerYa
+   ============================== */
+.loader-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: linear-gradient(135deg, #ffffff, #f5f5f5);
   display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+  z-index: 9999;
+  animation: fadeOut 1s ease 1.5s forwards;
 }
 
-.App-link {
-  color: #61dafb;
+[data-bs-theme="dark"] .loader-container {
+  background: linear-gradient(135deg, #121212, #1e1e1e);
 }
 
-@keyframes App-logo-spin {
+.loader-content {
+  animation: zoomIn 0.8s ease;
+}
+
+.loader-logo i {
+  font-size: 80px;
+  animation: rotate 1.6s linear infinite;
+}
+
+@keyframes rotate {
   from {
     transform: rotate(0deg);
   }
   to {
     transform: rotate(360deg);
   }
+}
+
+@keyframes fadeOut {
+  to {
+    opacity: 0;
+    visibility: hidden;
+  }
+}
+
+@keyframes zoomIn {
+  from {
+    transform: scale(0.7);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+/* Menú desplegable estilo profesional */
+.navbar .dropdown-menu {
+  background-color: rgba(25, 25, 25, 0.95);
+  animation: fadeIn 0.3s ease;
+}
+
+.navbar-light .dropdown-menu {
+  background-color: rgba(255, 255, 255, 0.98);
+}
+
+.dropdown-menu .dropdown-item {
+  font-weight: 500;
+  padding: 10px 18px;
+  color: #222 !important;
+  transition: all 0.2s ease;
+}
+
+.navbar-dark .dropdown-item {
+  color: #f8f9fa !important;
+}
+
+.dropdown-item:hover {
+  background-color: #c70000 !important;
+  color: #fff !important;
+  transform: translateX(5px);
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+/* ==============================================
+   🔧 HERO SECTION TallerYa
+   ============================================== */
+.hero-section {
+  background-image: linear-gradient(
+      rgba(0, 0, 0, 0.6),
+      rgba(0, 0, 0, 0.6)
+    ),
+    url("https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=1350&q=80");
+  background-size: cover;
+  background-position: center;
+  height: 80vh;
+  color: #fff;
+  position: relative;
+  overflow: hidden;
+  animation: fadeInHero 1.2s ease-in-out;
+}
+
+[data-bs-theme="light"] .hero-section {
+  background-image: linear-gradient(
+      rgba(255, 255, 255, 0.4),
+      rgba(255, 255, 255, 0.4)
+    ),
+    url("https://images.unsplash.com/photo-1525609004556-c46c7d6cf023?auto=format&fit=crop&w=1350&q=80");
+  color: #111;
+}
+
+.hero-section h1 {
+  font-size: 3rem;
+  letter-spacing: 1px;
+  color: #f8f9fa;
+}
+
+.hero-section h4 {
+  font-size: 1.5rem;
+  font-weight: 400;
+  color: #ddd;
+}
+
+[data-bs-theme="light"] .hero-section h1,
+[data-bs-theme="light"] .hero-section h4 {
+  color: #222;
+}
+
+.hero-section .btn {
+  border-radius: 50px;
+  transition: all 0.3s ease-in-out;
+}
+
+.hero-section .btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 12px rgba(199, 0, 0, 0.4);
+}
+
+@keyframes fadeInHero {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ==============================================
+   🔧 HERO WRAPPER AJUSTADO A PANTALLA COMPLETA
+   ============================================== */
+.hero-wrapper {
+  width: 100vw;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+/* Evita márgenes blancos del contenedor padre */
+body, html {
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+}
+.dashboard-container {
+  margin-top: 40px;
 }

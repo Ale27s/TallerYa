@@ -93,7 +93,7 @@ function Navbar() {
             </li>
 
             {/* Páginas */}
-            <li className="nav-item dropdown">
+            <li className="nav-item dropdown mega-dropdown">
               <Link
                 className="nav-link dropdown-toggle"
                 to="#"
@@ -103,15 +103,34 @@ function Navbar() {
               >
                 PÁGINAS
               </Link>
-              <ul className="dropdown-menu shadow border-0">
-                <li><Link className="dropdown-item" to="/clientes">Clientes</Link></li>
-                <li><Link className="dropdown-item" to="/personal">Personal</Link></li>
-                <li><hr className="dropdown-divider" /></li>
-                <li><Link className="dropdown-item" to="/login">Iniciar sesión</Link></li>
-                <li><Link className="dropdown-item" to="/register">Registro</Link></li>
-                <li><Link className="dropdown-item" to="/contacto">Contacto</Link></li>
-                <li><Link className="dropdown-item" to="/ayuda">Ayuda y soporte</Link></li>
-              </ul>
+              <div className="dropdown-menu mega-menu shadow border-0 p-0" aria-labelledby="pagesDropdown">
+                <div className="mega-menu__content py-3">
+                  <Link className="dropdown-item mega-menu__link" to="/clientes">
+                    <span>Clientes</span>
+                    <i className="bi bi-chevron-right"></i>
+                  </Link>
+                  <Link className="dropdown-item mega-menu__link" to="/personal">
+                    <span>Personal</span>
+                    <i className="bi bi-chevron-right"></i>
+                  </Link>
+                  <Link className="dropdown-item mega-menu__link" to="/login">
+                    <span>Iniciar sesión</span>
+                    <i className="bi bi-chevron-right"></i>
+                  </Link>
+                  <Link className="dropdown-item mega-menu__link" to="/register">
+                    <span>Registro</span>
+                    <i className="bi bi-chevron-right"></i>
+                  </Link>
+                  <Link className="dropdown-item mega-menu__link" to="/contacto">
+                    <span>Contacto</span>
+                    <i className="bi bi-chevron-right"></i>
+                  </Link>
+                  <Link className="dropdown-item mega-menu__link" to="/ayuda">
+                    <span>Ayuda y soporte</span>
+                    <i className="bi bi-chevron-right"></i>
+                  </Link>
+                </div>
+              </div>
             </li>
 
             {/* Contacto */}

@@ -67,6 +67,7 @@ function Layout() {
             {/* Extras */}
             <Route path="/prices" element={<Prices />} />
             <Route path="/contact" element={<Contact />} />
+            <Route path="/contacto" element={<Contact />} />
 
             {/* Login y registro */}
             <Route path="/login" element={<Login />} />

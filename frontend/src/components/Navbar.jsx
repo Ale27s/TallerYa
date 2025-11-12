@@ -1,9 +1,10 @@
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useState, useEffect } from "react";
 import "bootstrap-icons/font/bootstrap-icons.css";
 
 function Navbar() {
   const navigate = useNavigate();
+  const location = useLocation(); // 👈 Nuevo: detecta cambios de ruta
   const user = JSON.parse(localStorage.getItem("user"));
   const [darkMode, setDarkMode] = useState(localStorage.getItem("theme") === "dark");
 
@@ -11,6 +12,14 @@ function Navbar() {
     document.body.setAttribute("data-bs-theme", darkMode ? "dark" : "light");
     localStorage.setItem("theme", darkMode ? "dark" : "light");
   }, [darkMode]);
+
+  // 👇 NUEVO: cierra el menú colapsable cuando se cambia de página
+  useEffect(() => {
+    const navCollapse = document.querySelector(".navbar-collapse");
+    if (navCollapse && navCollapse.classList.contains("show")) {
+      navCollapse.classList.remove("show");
+    }
+  }, [location]);
 
   const handleLogout = () => {
     localStorage.removeItem("user");
@@ -83,7 +92,7 @@ function Navbar() {
               </Link>
             </li>
 
-            {/* Páginas (submenú largo tipo ejemplo de tu imagen) */}
+            {/* Páginas */}
             <li className="nav-item dropdown">
               <Link
                 className="nav-link dropdown-toggle"
@@ -105,7 +114,7 @@ function Navbar() {
               </ul>
             </li>
 
-            {/* Contactos */}
+            {/* Contacto */}
             <li className="nav-item">
               <Link className="nav-link" to="/contacto">
                 CONTACTO

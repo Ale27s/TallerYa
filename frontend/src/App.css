@@ -1,55 +1,101 @@
-/* Animaciones del sidebar */
-.slide-in {
-  transform: translateX(0);
-}
-.slide-out {
-  transform: translateX(-260px);
+/* ============================================================
+   ⚙️ BASE GENERAL
+   ============================================================ */
+html, body {
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+  font-family: "Segoe UI", sans-serif;
 }
 
-/* Transiciones suaves */
 .navbar,
 .sidebar,
 .card {
   transition: all 0.3s ease-in-out;
 }
 
-/* Hover rojo */
-.nav-link:hover {
-  color: #c70000 !important;
-}
-
-/* Tarjetas del Dashboard */
-.stat-card {
-  border-top: 4px solid #c70000 !important;
-  transition: transform 0.3s ease;
-}
-.stat-card:hover {
-  transform: translateY(-5px);
-}
-
-/* Tema oscuro personalizado */
+/* ============================================================
+   🎨 COLORES PRINCIPALES Y TEMAS
+   ============================================================ */
 [data-bs-theme="dark"] {
   background-color: #121212;
   color: #f5f5f5;
 }
+
+[data-bs-theme="light"] {
+  background-color: #f8f9fa;
+  color: #111;
+}
+
 [data-bs-theme="dark"] .card {
   background-color: #1e1e1e;
   border: 1px solid #2c2c2c;
 }
 
-/* ==============================
-   🔧 ANIMATED LOADER TallerYa
-   ============================== */
+[data-bs-theme="light"] .card {
+  background-color: #fff;
+  border: 1px solid #e0e0e0;
+}
+
+/* ============================================================
+   🚀 ANIMACIONES
+   ============================================================ */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes rotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes fadeOut {
+  to { opacity: 0; visibility: hidden; }
+}
+
+@keyframes zoomIn {
+  from { transform: scale(0.7); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+/* ============================================================
+   🧭 NAVBAR Y MENÚS
+   ============================================================ */
+.nav-link:hover {
+  color: #c70000 !important;
+}
+
+.navbar .dropdown-menu {
+  background-color: rgba(25, 25, 25, 0.95);
+  animation: fadeIn 0.3s ease;
+}
+
+.navbar-light .dropdown-menu {
+  background-color: rgba(255, 255, 255, 0.98);
+}
+
+.dropdown-item {
+  font-weight: 500;
+  padding: 10px 18px;
+  transition: all 0.2s ease;
+}
+
+.dropdown-item:hover {
+  background-color: #c70000 !important;
+  color: #fff !important;
+  transform: translateX(5px);
+}
+
+/* ============================================================
+   🔧 LOADER ANIMADO TallerYa
+   ============================================================ */
 .loader-container {
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
+  top: 0; left: 0;
+  width: 100vw; height: 100vh;
   background: linear-gradient(135deg, #ffffff, #f5f5f5);
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  display: flex; align-items: center; justify-content: center;
   z-index: 9999;
   animation: fadeOut 1s ease 1.5s forwards;
 }
@@ -67,122 +113,43 @@
   animation: rotate 1.6s linear infinite;
 }
 
-@keyframes rotate {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-@keyframes fadeOut {
-  to {
-    opacity: 0;
-    visibility: hidden;
-  }
-}
-
-@keyframes zoomIn {
-  from {
-    transform: scale(0.7);
-    opacity: 0;
-  }
-  to {
-    transform: scale(1);
-    opacity: 1;
-  }
-}
-/* Menú desplegable estilo profesional */
-.navbar .dropdown-menu {
-  background-color: rgba(25, 25, 25, 0.95);
-  animation: fadeIn 0.3s ease;
-}
-
-.navbar-light .dropdown-menu {
-  background-color: rgba(255, 255, 255, 0.98);
-}
-
-.dropdown-menu .dropdown-item {
-  font-weight: 500;
-  padding: 10px 18px;
-  color: #222 !important;
-  transition: all 0.2s ease;
-}
-
-.navbar-dark .dropdown-item {
-  color: #f8f9fa !important;
-}
-
-.dropdown-item:hover {
-  background-color: #c70000 !important;
-  color: #fff !important;
-  transform: translateX(5px);
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(-5px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-/* ==============================================
-   🔧 HERO SECTION TallerYa con Parallax
-   ============================================== */
+/* ============================================================
+   🏎️ HERO SECTION (Pantalla principal)
+   ============================================================ */
 .hero-section {
   position: relative;
   height: 90vh;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #fff;
   text-align: center;
   overflow: hidden;
-  background-image: linear-gradient(
-      rgba(0, 0, 0, 0.6),
-      rgba(0, 0, 0, 0.6)
-    ),
+  background-image: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)),
     url("https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=1350&q=80");
   background-size: cover;
   background-position: center;
-  background-attachment: fixed; /* 💡 Parallax */
-  animation: fadeInHero 1.2s ease-in-out;
+  background-attachment: fixed;
+  animation: fadeIn 1.2s ease-in-out;
+  color: #fff;
 }
 
-/* 🌞 Modo claro */
 [data-bs-theme="light"] .hero-section {
-  background-image: linear-gradient(
-      rgba(255, 255, 255, 0.4),
-      rgba(255, 255, 255, 0.4)
-    ),
+  background-image: linear-gradient(rgba(255,255,255,0.4), rgba(255,255,255,0.4)),
     url("https://images.unsplash.com/photo-1525609004556-c46c7d6cf023?auto=format&fit=crop&w=1350&q=80");
   color: #111;
 }
 
-/* 🎨 Texto */
 .hero-section h1 {
   font-size: 3rem;
   font-weight: 700;
-  letter-spacing: 1px;
   text-shadow: 0 3px 10px rgba(0, 0, 0, 0.6);
 }
 
 .hero-section h4 {
   font-size: 1.3rem;
-  font-weight: 400;
   color: #ddd;
 }
 
-[data-bs-theme="light"] .hero-section h1,
-[data-bs-theme="light"] .hero-section h4 {
-  color: #222;
-}
-
-/* 🔘 Botones */
 .hero-section .btn {
   border-radius: 50px;
   transition: all 0.3s ease-in-out;
@@ -193,241 +160,334 @@
   box-shadow: 0 6px 12px rgba(199, 0, 0, 0.4);
 }
 
-/* 🌀 Efecto Parallax suave */
-@keyframes parallaxMove {
-  from {
-    background-position: center 0px;
-  }
-  to {
-    background-position: center -80px;
-  }
-}
-
-/* 🎬 Animación al cargar */
-@keyframes fadeInHero {
-  from {
-    opacity: 0;
-    transform: translateY(-10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-/* 📱 Responsivo */
-@media (max-width: 768px) {
-  .hero-section {
-    height: 70vh;
-    background-attachment: scroll; /* Evita bug móvil */
-  }
-
-  .hero-section h1 {
-    font-size: 2.2rem;
-  }
-
-  .hero-section h4 {
-    font-size: 1rem;
-  }
-}
-/* --- HEROSection Mejorado --- */
-.text-shadow {
-  text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.6);
-}
-
-.hero-section {
-  animation: fadeInHero 1.3s ease-in-out;
-  position: relative;
-}
-
-.hero-section .btn {
-  transition: all 0.3s ease-in-out;
-}
-
-.hero-section .btn:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 6px 12px rgba(199, 0, 0, 0.5);
-}
-
-/* Modo claro */
-[data-bs-theme="light"] .hero-section {
-  background-image: linear-gradient(
-      rgba(255, 255, 255, 0.5),
-      rgba(255, 255, 255, 0.5)
-    ),
-    url("https://images.unsplash.com/photo-1525609004556-c46c7d6cf023?auto=format&fit=crop&w=1600&q=80");
-  color: #111;
-}
-
-[data-bs-theme="light"] .hero-section .btn-outline-light {
-  border-color: #c70000;
-  color: #c70000;
-}
-
-[data-bs-theme="light"] .hero-section .btn-outline-light:hover {
-  background-color: #c70000;
-  color: #fff;
-}
-
-/* Animación de entrada */
-@keyframes fadeInHero {
-  from {
-    opacity: 0;
-    transform: translateY(-15px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-
-/* ==============================================
-   🔧 AJUSTE GENERAL DE CONTENEDORES
-   ============================================== */
-.hero-wrapper {
-  width: 100vw;
-  margin: 0;
-  padding: 0;
-  overflow: hidden;
-}
-
-.container-fluid,
-.row {
-  margin: 0 !important;
-  padding: 0 !important;
-}
-
-.sidebar-container {
+/* ============================================================
+   🌐 PÁGINAS A PANTALLA COMPLETA (SIN SIDEBAR)
+   ============================================================ */
+.content-wrapper-full {
+  /* ✅ Modificado para coincidir con calendar-fullscreen */
+  width: 97vw;
   min-height: 100vh;
-}
-
-.content-area {
-  min-height: 100vh;
-  background-color: var(--bs-body-bg);
-}
-
-/* ==============================================
-   🔧 ESTILO UNIFICADO DE PÁGINAS INTERNAS TallerYa
-   ============================================== */
-
-/* Fondo y espaciado general */
-.page-container {
-  min-height: 100vh;
-  padding: 40px 50px;
+  padding: 40px 0;
   background-color: var(--bs-body-bg);
   color: var(--bs-body-color);
+  transition: all 0.3s ease-in-out;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  overflow-x: hidden;
 }
 
-/* Tema oscuro */
-[data-bs-theme="dark"] .page-container {
+/* Contenedor interno centrado */
+.page-container-centered {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* ============================================================
+   🎨 TEMAS CLARO Y OSCURO
+   ============================================================ */
+[data-bs-theme="dark"] .content-wrapper-full {
   background-color: #121212;
   color: #f5f5f5;
 }
 
-/* Títulos */
+[data-bs-theme="light"] .content-wrapper-full {
+  background-color: #ffffff;
+  color: #111;
+}
+
+/* ============================================================
+   🔴 ESTILO UNIFICADO PARA TODAS LAS PÁGINAS INTERNAS
+   ============================================================ */
 .page-title {
   font-size: 2rem;
   font-weight: 700;
   color: #c70000;
   border-bottom: 2px solid #c70000;
   display: inline-block;
-  margin-bottom: 20px;
+  margin-bottom: 25px;
 }
 
-/* Subtítulos */
 .page-subtitle {
   font-size: 1.1rem;
-  color: #999;
-  margin-bottom: 20px;
+  color: #888;
+  margin-bottom: 30px;
 }
 
-/* Tablas y tarjetas */
 .card, .table {
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-top: 4px solid #c70000;
-  background-color: var(--bs-card-bg, #1e1e1e);
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+  border-radius: 12px;
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.2);
+  transition: transform 0.3s ease;
+}
+
+.card:hover, .table:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 14px rgba(199, 0, 0, 0.35);
+}
+
+/* ============================================================
+   📆 CALENDARIO (FullCalendar)
+   ============================================================ */
+.calendar-wrapper {
+  /* ✅ Modificado para coincidir con calendar-fullscreen */
+  width: 97vw;
+  min-height: calc(100vh - 150px);
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  margin: 0;
+  padding: 0;
+  background-color: var(--bs-body-bg);
+  overflow-x: hidden;
+}
+
+.calendar-card {
+  width: 95vw;
+  max-width: 1600px;
+  margin: 0 auto;
+  border-radius: 10px;
+  background-color: var(--bs-card-bg);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3);
   transition: all 0.3s ease-in-out;
 }
 
-[data-bs-theme="light"] .card, 
-[data-bs-theme="light"] .table {
-  background-color: #fff;
-  border: 1px solid #e0e0e0;
+[data-bs-theme="dark"] .calendar-card {
+  background-color: #1b1b1b;
+  border: 1px solid #2a2a2a;
 }
 
-/* Hover suave */
-.card:hover, .table:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 4px 12px rgba(199, 0, 0, 0.3);
+/* =========================================
+   🧭 Calendario fullscreen con barra fija
+   ========================================= */
+.calendar-fullscreen {
+  width: 97vw;
+  min-height: 100vh;
+  background-color: var(--bs-body-bg);
+  overflow-x: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
-/* Formularios */
-.form-control, .btn {
-  border-radius: 10px;
+.calendar-toolbar {
+  width: 100%;
+  background-color: var(--bs-body-bg);
+  backdrop-filter: blur(4px);
+  z-index: 100;
+  border-bottom: 2px solid #c70000;
+  transition: all 0.3s ease-in-out;
 }
 
-.btn-primary {
+.calendar-container {
+  width: 95vw;
+  max-width: 1500px;
+  background-color: var(--bs-card-bg);
+  border-radius: 12px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+  margin-top: 10px;
+  padding: 20px 20px 20px 10px; 
+}
+
+[data-bs-theme="dark"] .calendar-toolbar {
+  background-color: #1a1a1a;
+}
+
+/* ============================================================
+   📱 RESPONSIVO
+   ============================================================ */
+@media (max-width: 992px) {
+  .content-wrapper-full,
+  .calendar-wrapper,
+  .calendar-fullscreen {
+    width: 100vw;
+    padding: 20px;
+  }
+
+  .calendar-container {
+    width: 98vw;
+    padding: 15px;
+  }
+
+  .page-title {
+    font-size: 1.6rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .content-wrapper-full,
+  .calendar-wrapper,
+  .calendar-fullscreen {
+    width: 100vw;
+    padding: 15px;
+  }
+
+  .page-title {
+    font-size: 1.4rem;
+  }
+
+  .card {
+    border-radius: 10px;
+  }
+}
+/* =========================================
+   🧭 Calendario fullscreen con barra fija
+   ========================================= */
+.calendar-fullscreen {
+  width: 97vw;
+  min-height: 100vh;
+  background-color: var(--bs-body-bg);
+  overflow-x: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Barra superior sticky */
+.calendar-toolbar {
+  width: 100%;
+  background-color: var(--bs-body-bg);
+  backdrop-filter: blur(4px);
+  z-index: 100;
+  border-bottom: 2px solid #c70000;
+  transition: all 0.3s ease-in-out;
+}
+
+/* Contenedor principal del calendario */
+.calendar-container {
+  width: 95vw;
+  max-width: 1500px;
+  background-color: var(--bs-card-bg);
+  border-radius: 12px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+  margin-top: 10px;
+  padding: 20px 20px 20px 10px; 
+}
+/* ============================================================
+   ✅ Ajuste de ancho completo para páginas de fondo total
+   ============================================================ */
+
+/* Inicio, Login y Contacto deben usar todo el ancho real */
+.hero-section,
+.login-page,
+.contact-page {
+  width: 100vw !important;
+  margin: 0 auto;
+  overflow-x: hidden;
+}
+
+/* Hero principal vuelve a ocupar 100% exacto */
+.hero-section {
+  max-width: 100%;
+  padding: 0;
+}
+
+/* Corrige desbordes en fondos con imagen */
+body, html {
+  overflow-x: hidden;
+}
+
+/* Evita barra lateral negra en modo oscuro */
+[data-bs-theme="dark"] .hero-section,
+[data-bs-theme="dark"] .login-page,
+[data-bs-theme="dark"] .contact-page {
+  background-color: #121212;
+}
+/* ============================================================
+   ✅ Corrección visual específica para LOGIN y CONTACTO
+   ============================================================ */
+
+/* Fuerza que ambas páginas ocupen el 100% horizontal real */
+.login-page,
+.contact-page {
+  width: 100vw !important;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center; /* centra horizontalmente */
+  align-items: center;     /* centra verticalmente */
+  margin: 0;
+  padding: 0;
+  background-color: var(--bs-body-bg);
+  overflow-x: hidden;
+}
+
+/* Centra el formulario de login dentro del viewport */
+.login-page .card {
+  margin: auto;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.4);
+  border-radius: 12px;
+}
+
+/* Corrige el espacio sobrante en CONTACTO */
+.contact-page .content-wrapper-full {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 40px 20px;
+}
+
+/* Quita cualquier fondo negro lateral residual */
+body, html {
+  overflow-x: hidden;
+}
+/* ==== Ajuste global para evitar que el navbar tape el contenido ==== */
+main, .page-content, .contact-page, .calendar-fullscreen, .content-wrapper-full {
+  padding-top: 90px !important; /* deja espacio debajo del navbar fijo */
+}
+/* =========================================
+   🧭 Ajuste general: evita que el contenido quede oculto tras el navbar fijo
+   ========================================= */
+.contact-page {
+  padding-top: 100px !important; /* deja espacio debajo del navbar */
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  background-color: var(--bs-body-bg);
+  color: var(--bs-body-color);
+}
+/* =========================================
+   📞 Página de Contacto (centrada y completa)
+   ========================================= */
+.contact-page {
+  padding-top: 100px; /* deja espacio debajo del Navbar fijo */
+  min-height: 100vh; /* ocupa toda la pantalla */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  background-color: var(--bs-body-bg);
+  color: var(--bs-body-color);
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+.contact-page .container {
+  max-width: 1200px;
+}
+
+.contact-page .form-control {
+  border-radius: 8px;
+}
+
+.contact-page .btn-danger {
   background-color: #c70000;
   border: none;
 }
 
-.btn-primary:hover {
-  background-color: #a30000;
+.contact-page .btn-danger:hover {
+  background-color: #a00000;
 }
 
-/* Ajuste del Dashboard */
-.dashboard-container {
-  padding: 30px;
-  margin-top: 0;
-  background: none;
-}
-
-/* Ajuste del sidebar vacío */
-.sidebar {
-  background-color: #111;
-}
-
-[data-bs-theme="light"] .sidebar {
+[data-bs-theme="light"] .contact-page {
   background-color: #f8f9fa;
+  color: #111;
 }
 
-/* Elimina franjas blancas o huecos */
-.container-fluid, .row {
-  margin: 0 !important;
-  padding: 0 !important;
-}
-
-.fc {
-  --fc-border-color: #ddd;
-  --fc-button-bg-color: #c70000;
-  --fc-button-border-color: #c70000;
-  --fc-button-hover-bg-color: #a80000;
-  --fc-button-active-bg-color: #c70000;
-}
-
-[data-bs-theme="dark"] .fc {
-  --fc-border-color: #333;
-  --fc-bg-event-color: #222;
-}
-
-.service-card {
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  transition: all 0.3s ease;
-}
-
-.service-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 4px 12px rgba(199, 0, 0, 0.4);
-}
-
-/* Modo claro */
-[data-bs-theme="light"] .service-card {
-  background-color: #ffffff;
-  color: #222;
-  border: 1px solid #ccc;
-}
-[data-bs-theme="light"] .service-card:hover {
-  box-shadow: 0 4px 12px rgba(199, 0, 0, 0.3);
+[data-bs-theme="dark"] .contact-page {
+  background-color: #121212;
+  color: #f5f5f5;
 }

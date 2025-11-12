@@ -5,7 +5,6 @@ import "bootstrap/dist/js/bootstrap.bundle.min.js";
 
 // ✅ Componentes
 import Navbar from "./components/Navbar.jsx";
-import Sidebar from "./components/Sidebar.jsx";
 import Loader from "./components/Loader.jsx";
 import HeroSection from "./components/HeroSection.jsx";
 
@@ -27,63 +26,58 @@ import Contact from "./pages/Contact.jsx";
 function Layout() {
   const location = useLocation();
 
-  // 🔹 Páginas sin Sidebar ni Hero
+  // 🔹 Rutas sin Sidebar (login, register)
   const noSidebar = ["/login", "/register"];
   const hideSidebar = noSidebar.includes(location.pathname);
 
+  // 🔹 Mostrar Hero solo en inicio
+  const showHero = location.pathname === "/";
+
   return (
     <>
-      {/* Loader animado */}
+      {/* Loader inicial */}
       <Loader />
 
-      {/* Navbar superior */}
+      {/* Navbar */}
       <Navbar />
 
-      {/* Hero principal solo en inicio */}
-      {location.pathname === "/" && (
+      {/* Hero principal (solo en inicio) */}
+      {showHero && (
         <div className="hero-wrapper">
           <HeroSection />
         </div>
       )}
 
-      {/* Contenido */}
-      <div className="container-fluid mt-4">
-        <div className="row">
-          {/* Sidebar visible excepto en login/register */}
-          {!hideSidebar && (
-            <div className="col-md-3 col-lg-2 d-none d-md-block bg-light sidebar">
-              <Sidebar />
-            </div>
-          )}
 
-          {/* Área principal */}
-          <main className={hideSidebar ? "col-12" : "col-md-9 ms-sm-auto col-lg-10 px-md-4"}>
-            <Routes>
-              {/* Dashboard principal */}
-              <Route path="/" element={<Dashboard />} />
 
-              {/* Módulos internos */}
-              <Route path="/personal" element={<Personal />} />
-              <Route path="/clientes" element={<Clientes />} />
-              <Route path="/mecanico" element={<Mecanico />} />
-              <Route path="/citas" element={<Citas />} />
-              <Route path="/facturacion" element={<Facturacion />} />
-              <Route path="/vehiculos" element={<Vehiculos />} />
+        {/* Contenido principal */}
+        <main className="content-wrapper p-4 animate__animated animate__fadeIn">
+          <Routes>
+            {/* Dashboard */}
+            <Route path="/" element={<Dashboard />} />
 
-              {/* Nuevas páginas */}
-              <Route path="/prices" element={<Prices />} />
-              <Route path="/contact" element={<Contact />} />
+            {/* Módulos */}
+            <Route path="/personal" element={<Personal />} />
+            <Route path="/clientes" element={<Clientes />} />
+            <Route path="/mecanico" element={<Mecanico />} />
+            <Route path="/citas" element={<Citas />} />
+            <Route path="/facturacion" element={<Facturacion />} />
+            <Route path="/vehiculos" element={<Vehiculos />} />
 
-              {/* Autenticación */}
-              <Route path="/login" element={<Login />} />
-              <Route path="/register" element={<Register />} />
-            </Routes>
-          </main>
-        </div>
-      </div>
+            {/* Extras */}
+            <Route path="/prices" element={<Prices />} />
+            <Route path="/contact" element={<Contact />} />
+
+            {/* Login y registro */}
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
+          </Routes>
+        </main>
+    
     </>
   );
 }
+
 
 function App() {
   return (

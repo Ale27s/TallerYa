@@ -21,7 +21,7 @@ function Citas() {
     estado: "PENDIENTE",
   });
 
-  // 🔹 Cargar citas desde el backend
+  // 🔹 Cargar citas desde backend
   const cargarCitas = async () => {
     try {
       const res = await axios.get("http://127.0.0.1:8000/api/citas/");
@@ -31,7 +31,6 @@ function Citas() {
         start: cita.fecha,
         end: cita.hora_fin || cita.fecha,
         estado: cita.estado,
-        cliente_nombre: cita.cliente_nombre,
         backgroundColor:
           cita.estado === "CONFIRMADA"
             ? "#28a745"
@@ -51,7 +50,7 @@ function Citas() {
     cargarCitas();
   }, []);
 
-  // 🔹 Filtro de citas según cliente y estado
+  // 🔹 Filtro de citas
   const citasFiltradas = citas.filter((c) => {
     const coincideCliente =
       !filtroCliente ||
@@ -61,7 +60,7 @@ function Citas() {
     return coincideCliente && coincideEstado;
   });
 
-  // 🔹 Abrir modal vacío para nueva cita
+  // 🔹 Nueva cita
   const abrirModalNueva = (info) => {
     setModalData({
       id: null,
@@ -77,7 +76,7 @@ function Citas() {
     modal.show();
   };
 
-  // 🔹 Abrir modal con datos de cita existente
+  // 🔹 Editar cita
   const abrirModalEditar = (clickInfo) => {
     const evento = clickInfo.event;
     setModalData({
@@ -94,7 +93,7 @@ function Citas() {
     modal.show();
   };
 
-  // 🔹 Guardar (crear o actualizar)
+  // 🔹 Guardar cita
   const guardarCita = async (e) => {
     e.preventDefault();
     try {
@@ -137,52 +136,44 @@ function Citas() {
   };
 
   return (
-    <div className="container mt-4">
-      <h3 className="fw-bold text-danger mb-3">
-        <i className="bi bi-calendar3 me-2"></i>Gestión de Citas
-      </h3>
+    <div className="calendar-fullscreen">
+      {/* Barra superior sticky */}
+      <div className="calendar-toolbar sticky-top shadow-sm p-3 mb-3">
+        <h4 className="fw-bold text-danger mb-0">
+          <i className="bi bi-calendar3 me-2"></i>Gestión de Citas
+        </h4>
 
-      {mensaje && <div className="alert alert-info">{mensaje}</div>}
-
-      {/* 🔹 Filtros */}
-      <div className="card mb-3 p-3 shadow-sm border-0 bg-light-subtle">
-        <div className="row g-3 align-items-center">
-          <div className="col-md-5">
-            <input
-              type="text"
-              className="form-control"
-              placeholder="Buscar por cliente o servicio..."
-              value={filtroCliente}
-              onChange={(e) => setFiltroCliente(e.target.value)}
-            />
-          </div>
-          <div className="col-md-4">
-            <select
-              className="form-select"
-              value={filtroEstado}
-              onChange={(e) => setFiltroEstado(e.target.value)}
-            >
-              <option value="TODAS">Todas las citas</option>
-              <option value="PENDIENTE">Pendientes</option>
-              <option value="CONFIRMADA">Confirmadas</option>
-              <option value="CANCELADA">Canceladas</option>
-            </select>
-          </div>
-          <div className="col-md-3 text-end">
-            <button
-              className="btn btn-danger"
-              onClick={() =>
-                abrirModalNueva({ dateStr: new Date().toISOString().split("T")[0] })
-              }
-            >
-              <i className="bi bi-plus-circle me-1"></i> Nueva Cita
-            </button>
-          </div>
+        <div className="toolbar-filters mt-3 d-flex flex-wrap gap-3">
+          <input
+            type="text"
+            className="form-control flex-grow-1"
+            placeholder="Buscar por cliente o servicio..."
+            value={filtroCliente}
+            onChange={(e) => setFiltroCliente(e.target.value)}
+          />
+          <select
+            className="form-select w-auto"
+            value={filtroEstado}
+            onChange={(e) => setFiltroEstado(e.target.value)}
+          >
+            <option value="TODAS">Todas las citas</option>
+            <option value="PENDIENTE">Pendientes</option>
+            <option value="CONFIRMADA">Confirmadas</option>
+            <option value="CANCELADA">Canceladas</option>
+          </select>
+          <button
+            className="btn btn-danger"
+            onClick={() =>
+              abrirModalNueva({ dateStr: new Date().toISOString().split("T")[0] })
+            }
+          >
+            <i className="bi bi-plus-circle me-1"></i> Nueva Cita
+          </button>
         </div>
       </div>
 
-      {/* 🔹 Calendario */}
-      <div className="card shadow border-0 p-3">
+      {/* Calendario principal */}
+      <div className="calendar-container">
         <FullCalendar
           plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
           initialView="dayGridMonth"
@@ -191,7 +182,8 @@ function Citas() {
           dateClick={abrirModalNueva}
           eventClick={abrirModalEditar}
           events={citasFiltradas}
-          height="80vh"
+          height="calc(100vh - 220px)"
+          expandRows={true}
           headerToolbar={{
             left: "prev,next today",
             center: "title",
@@ -206,7 +198,7 @@ function Citas() {
         />
       </div>
 
-      {/* 🔹 Modal Cita */}
+      {/* Modal */}
       <div
         className="modal fade"
         id="modalCita"

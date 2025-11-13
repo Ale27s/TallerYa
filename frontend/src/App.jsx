@@ -18,20 +18,52 @@ import Facturacion from "./pages/Facturacion.jsx";
 import Vehiculos from "./pages/Vehiculos.jsx";
 import Login from "./pages/Login.jsx";
 import Register from "./pages/Register.jsx";
+import ClienteHome from "./pages/ClienteHome.jsx";
 
 // ✅ Nuevas páginas
 import Prices from "./pages/Prices.jsx";
 import Contact from "./pages/Contact.jsx";
+import Noticias from "./pages/Noticias.jsx";
+import Ayuda from "./pages/Ayuda.jsx";
 
 function Layout() {
   const location = useLocation();
 
   // 🔹 Rutas sin Sidebar (login, register)
-  const noSidebar = ["/login", "/register"];
-  const hideSidebar = noSidebar.includes(location.pathname);
+  const fullWidthRoutes = ["/login", "/register"];
+  const isFullWidth = fullWidthRoutes.includes(location.pathname);
 
   // 🔹 Mostrar Hero solo en inicio
   const showHero = location.pathname === "/";
+
+  const routes = (
+    <Routes>
+      {/* Dashboard */}
+      <Route path="/" element={<Dashboard />} />
+      <Route path="/dashboard" element={<Dashboard />} />
+
+      {/* Módulos */}
+      <Route path="/personal" element={<Personal />} />
+      <Route path="/clientes" element={<Clientes />} />
+      <Route path="/cliente" element={<ClienteHome />} />
+      <Route path="/mecanico" element={<Mecanico />} />
+      <Route path="/citas" element={<Citas />} />
+      <Route path="/facturacion" element={<Facturacion />} />
+      <Route path="/vehiculos" element={<Vehiculos />} />
+
+      {/* Extras */}
+      <Route path="/prices" element={<Prices />} />
+      <Route path="/precios" element={<Prices />} />
+      <Route path="/contact" element={<Contact />} />
+      <Route path="/contacto" element={<Contact />} />
+      <Route path="/noticias" element={<Noticias />} />
+      <Route path="/ayuda" element={<Ayuda />} />
+
+      {/* Login y registro */}
+      <Route path="/login" element={<Login />} />
+      <Route path="/register" element={<Register />} />
+    </Routes>
+  );
 
   return (
     <>
@@ -48,32 +80,16 @@ function Layout() {
         </div>
       )}
 
-
-
-        {/* Contenido principal */}
-        <main className="content-wrapper p-4 animate__animated animate__fadeIn">
-          <Routes>
-            {/* Dashboard */}
-            <Route path="/" element={<Dashboard />} />
-
-            {/* Módulos */}
-            <Route path="/personal" element={<Personal />} />
-            <Route path="/clientes" element={<Clientes />} />
-            <Route path="/mecanico" element={<Mecanico />} />
-            <Route path="/citas" element={<Citas />} />
-            <Route path="/facturacion" element={<Facturacion />} />
-            <Route path="/vehiculos" element={<Vehiculos />} />
-
-            {/* Extras */}
-            <Route path="/prices" element={<Prices />} />
-            <Route path="/contact" element={<Contact />} />
-
-            {/* Login y registro */}
-            <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Register />} />
-          </Routes>
+      {isFullWidth ? (
+        <div className="page-full animate__animated animate__fadeIn">
+          <div className="w-100">{routes}</div>
+        </div>
+      ) : (
+        <main className="content-wrapper animate__animated animate__fadeIn">
+          {routes}
         </main>
-    
+      )}
+
     </>
   );
 }

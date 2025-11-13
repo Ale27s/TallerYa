@@ -163,6 +163,26 @@ html, body {
 /* ============================================================
    🌐 PÁGINAS A PANTALLA COMPLETA (SIN SIDEBAR)
    ============================================================ */
+.content-wrapper {
+  width: min(1400px, 100%);
+  min-height: calc(100vh - 140px);
+  margin: 0 auto;
+  padding: 120px 2rem 3rem;
+  background-color: var(--bs-body-bg);
+  color: var(--bs-body-color);
+}
+
+.page-full {
+  width: 100%;
+  min-height: calc(100vh - 80px);
+  padding: 110px 1.5rem 3rem;
+  background-color: var(--bs-body-bg);
+  display: flex;
+  justify-content: center;
+  align-items: stretch;
+  overflow-x: hidden;
+}
+
 .content-wrapper-full {
   /* ✅ Modificado para coincidir con calendar-fullscreen */
   width: 97vw;
@@ -306,6 +326,14 @@ html, body {
     padding: 20px;
   }
 
+  .content-wrapper {
+    padding: 110px 1.5rem 2.5rem;
+  }
+
+  .page-full {
+    padding: 100px 1rem 2rem;
+  }
+
   .calendar-container {
     width: 98vw;
     padding: 15px;
@@ -322,6 +350,14 @@ html, body {
   .calendar-fullscreen {
     width: 100vw;
     padding: 15px;
+  }
+
+  .content-wrapper {
+    padding: 100px 1rem 2rem;
+  }
+
+  .page-full {
+    padding: 90px 0.75rem 1.5rem;
   }
 
   .page-title {
@@ -435,27 +471,11 @@ body, html {
 body, html {
   overflow-x: hidden;
 }
-/* ==== Ajuste global para evitar que el navbar tape el contenido ==== */
-main, .page-content, .contact-page, .calendar-fullscreen, .content-wrapper-full {
-  padding-top: 90px !important; /* deja espacio debajo del navbar fijo */
-}
-/* =========================================
-   🧭 Ajuste general: evita que el contenido quede oculto tras el navbar fijo
-   ========================================= */
-.contact-page {
-  padding-top: 100px !important; /* deja espacio debajo del navbar */
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  background-color: var(--bs-body-bg);
-  color: var(--bs-body-color);
-}
 /* =========================================
    📞 Página de Contacto (centrada y completa)
    ========================================= */
 .contact-page {
-  padding-top: 100px; /* deja espacio debajo del Navbar fijo */
+  padding-top: 120px;
   min-height: 100vh; /* ocupa toda la pantalla */
   display: flex;
   flex-direction: column;

@@ -1,0 +1,131 @@
+.invoice-layout {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
+.invoice-main {
+  width: 100%;
+  max-width: 1100px;
+}
+
+.invoice-card {
+  border: 1px solid rgba(199, 0, 0, 0.15);
+  border-top: 6px solid #c70000;
+  border-radius: 14px;
+  overflow: hidden;
+}
+
+.invoice-header-row {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 1.5rem;
+}
+
+.invoice-client-block {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-top: 1.25rem;
+}
+
+.compact-card {
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  border-radius: 12px;
+  box-shadow: none;
+}
+
+.invoice-brand {
+  background: linear-gradient(180deg, rgba(199, 0, 0, 0.08), rgba(199, 0, 0, 0.02));
+  border-radius: 12px;
+  padding: 12px;
+  border: 1px dashed rgba(199, 0, 0, 0.4);
+}
+
+.invoice-meta {
+  border: 1px solid rgba(199, 0, 0, 0.25);
+  border-radius: 12px;
+  padding: 12px;
+  background: #fff6f6;
+}
+
+.invoice-meta .form-label {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #5b0f0f;
+}
+
+.meta-title {
+  background: #c70000;
+  color: #fff;
+  padding: 8px 12px;
+  border-radius: 10px;
+  font-weight: 700;
+  margin-bottom: 12px;
+  letter-spacing: 0.5px;
+}
+
+.meta-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 0.75rem;
+}
+
+.invoice-table-wrapper .table-title {
+  font-weight: 700;
+  color: #8a0c0c;
+}
+
+.invoice-table thead th {
+  background: #fff0f0;
+  color: #4a0606;
+  border-bottom: 2px solid #c70000;
+  font-size: 0.92rem;
+}
+
+.invoice-table tbody td {
+  vertical-align: middle;
+  background: #fff;
+}
+
+.invoice-table input {
+  background: #fcfcfc;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.invoice-remarks textarea {
+  resize: none;
+}
+
+.invoice-summary {
+  background: #fff8f8;
+  color: #2c2c2c;
+  border-radius: 14px;
+  border: 1px solid rgba(199, 0, 0, 0.15);
+  box-shadow: none;
+}
+
+.invoice-summary .separator {
+  border-top: 1px dashed rgba(0, 0, 0, 0.15);
+}
+
+.invoice-summary .total-box {
+  background: rgba(199, 0, 0, 0.08);
+  padding: 10px 12px;
+  border-radius: 10px;
+  color: #2c2c2c;
+}
+
+.invoice-table-wrapper .btn {
+  border-radius: 30px;
+}
+
+@media (max-width: 1200px) {
+  .invoice-header-row {
+    grid-template-columns: 1fr;
+  }
+
+  .invoice-client-block {
+    grid-template-columns: 1fr;
+  }
+}

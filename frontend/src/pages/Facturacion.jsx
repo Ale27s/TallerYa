@@ -284,6 +284,121 @@ function Facturacion() {
                   </div>
                 </div>
 
+                <div className="invoice-client-block">
+                  <div className="card compact-card">
+                    <div className="card-header text-bg-danger fw-semibold">
+                      Datos del cliente
+                    </div>
+                    <div className="card-body">
+                      <div className="row g-2">
+                        <div className="col-md-6">
+                          <label className="form-label">Nombre o razón social</label>
+                          <input
+                            className="form-control form-control-sm"
+                            value={clienteData.name}
+                            onChange={(e) => handleClienteChange("name", e.target.value)}
+                          />
+                        </div>
+                        <div className="col-md-6">
+                          <label className="form-label">NIF/CIF</label>
+                          <input
+                            className="form-control form-control-sm"
+                            value={clienteData.nif}
+                            onChange={(e) => handleClienteChange("nif", e.target.value)}
+                          />
+                        </div>
+                        <div className="col-md-6">
+                          <label className="form-label">Teléfono</label>
+                          <input
+                            className="form-control form-control-sm"
+                            value={clienteData.phone}
+                            onChange={(e) => handleClienteChange("phone", e.target.value)}
+                          />
+                        </div>
+                        <div className="col-md-6">
+                          <label className="form-label">Correo electrónico</label>
+                          <input
+                            type="email"
+                            className="form-control form-control-sm"
+                            value={clienteData.email}
+                            onChange={(e) => handleClienteChange("email", e.target.value)}
+                          />
+                        </div>
+                        <div className="col-md-8">
+                          <label className="form-label">Dirección</label>
+                          <input
+                            className="form-control form-control-sm"
+                            value={clienteData.address}
+                            onChange={(e) =>
+                              handleClienteChange("address", e.target.value)
+                            }
+                          />
+                        </div>
+                        <div className="col-md-4">
+                          <label className="form-label">Código postal</label>
+                          <input
+                            className="form-control form-control-sm"
+                            value={clienteData.postalCode}
+                            onChange={(e) =>
+                              handleClienteChange("postalCode", e.target.value)
+                            }
+                          />
+                        </div>
+                        <div className="col-md-6">
+                          <label className="form-label">Ciudad</label>
+                          <input
+                            className="form-control form-control-sm"
+                            value={clienteData.city}
+                            onChange={(e) => handleClienteChange("city", e.target.value)}
+                          />
+                        </div>
+                        <div className="col-md-6">
+                          <label className="form-label">Provincia</label>
+                          <input
+                            className="form-control form-control-sm"
+                            value={clienteData.province}
+                            onChange={(e) => handleClienteChange("province", e.target.value)}
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="card compact-card">
+                    <div className="card-header text-bg-secondary fw-semibold">
+                      Datos del vehículo
+                    </div>
+                    <div className="card-body">
+                      <div className="row g-2">
+                        <div className="col-md-6">
+                          <label className="form-label">Matrícula</label>
+                          <input
+                            className="form-control form-control-sm"
+                            value={vehiculoData.plate}
+                            onChange={(e) => handleVehiculoChange("plate", e.target.value)}
+                          />
+                        </div>
+                        <div className="col-md-6">
+                          <label className="form-label">Kilometraje</label>
+                          <input
+                            className="form-control form-control-sm"
+                            value={vehiculoData.km}
+                            onChange={(e) => handleVehiculoChange("km", e.target.value)}
+                          />
+                        </div>
+                        <div className="col-12">
+                          <label className="form-label">Marca / Modelo</label>
+                          <input
+                            className="form-control form-control-sm"
+                            value={vehiculoData.model}
+                            onChange={(e) => handleVehiculoChange("model", e.target.value)}
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
                 <div className="invoice-table-wrapper mt-4">
                   <div className="d-flex justify-content-between align-items-center mb-2">
                     <div className="table-title">Detalle de línea</div>
@@ -473,164 +588,25 @@ function Facturacion() {
                     </div>
                   </div>
                 </div>
+
+                <div className="d-grid gap-3 mt-4">
+                  <button className="btn btn-danger" onClick={guardarFactura}>
+                    <i className="bi bi-save me-2"></i>Guardar factura con estos datos
+                  </button>
+                  <div className="alert alert-secondary mb-0">
+                    El botón guarda la factura en el backend si está disponible. Si no,
+                    los datos quedan listos para descargarlos o imprimirlos siguiendo
+                    el diseño mostrado.
+                  </div>
+                </div>
+
+                {mensaje && (
+                  <div className="alert alert-info mt-3 text-center shadow-sm">
+                    {mensaje}
+                  </div>
+                )}
               </div>
             </div>
-          </div>
-
-          <div className="invoice-sidebar">
-            <div className="card shadow-sm mb-3">
-              <div className="card-header bg-danger text-white fw-semibold">
-                Datos del cliente obligatorios
-              </div>
-              <div className="card-body">
-                <div className="row g-2">
-                  <div className="col-12">
-                    <label className="form-label">Nombre o razón social</label>
-                    <input
-                      className="form-control"
-                      placeholder="Nombre completo"
-                      value={clienteData.name}
-                      onChange={(e) => handleClienteChange("name", e.target.value)}
-                    />
-                  </div>
-                  <div className="col-md-6">
-                    <label className="form-label">NIF/CIF</label>
-                    <input
-                      className="form-control"
-                      placeholder="Documento fiscal"
-                      value={clienteData.nif}
-                      onChange={(e) => handleClienteChange("nif", e.target.value)}
-                    />
-                  </div>
-                  <div className="col-md-6">
-                    <label className="form-label">Teléfono</label>
-                    <input
-                      className="form-control"
-                      placeholder="Contacto"
-                      value={clienteData.phone}
-                      onChange={(e) => handleClienteChange("phone", e.target.value)}
-                    />
-                  </div>
-                  <div className="col-12">
-                    <label className="form-label">Dirección</label>
-                    <input
-                      className="form-control"
-                      placeholder="Calle y número"
-                      value={clienteData.address}
-                      onChange={(e) =>
-                        handleClienteChange("address", e.target.value)
-                      }
-                    />
-                  </div>
-                  <div className="col-md-6">
-                    <label className="form-label">Ciudad</label>
-                    <input
-                      className="form-control"
-                      value={clienteData.city}
-                      onChange={(e) => handleClienteChange("city", e.target.value)}
-                    />
-                  </div>
-                  <div className="col-md-6">
-                    <label className="form-label">Provincia</label>
-                    <input
-                      className="form-control"
-                      value={clienteData.province}
-                      onChange={(e) => handleClienteChange("province", e.target.value)}
-                    />
-                  </div>
-                  <div className="col-md-6">
-                    <label className="form-label">Código postal</label>
-                    <input
-                      className="form-control"
-                      value={clienteData.postalCode}
-                      onChange={(e) =>
-                        handleClienteChange("postalCode", e.target.value)
-                      }
-                    />
-                  </div>
-                  <div className="col-md-6">
-                    <label className="form-label">Correo electrónico</label>
-                    <input
-                      type="email"
-                      className="form-control"
-                      value={clienteData.email}
-                      onChange={(e) => handleClienteChange("email", e.target.value)}
-                    />
-                  </div>
-                </div>
-                <div className="client-preview mt-3">
-                  <div className="client-preview-title">Datos visibles en la factura</div>
-                  <p className="mb-0 fw-semibold">{clienteData.name || "Nombre del cliente"}</p>
-                  <small className="text-muted d-block">{clienteData.nif || "Documento"}</small>
-                  <small className="d-block">
-                    {clienteData.address || "Dirección"} · {clienteData.city || "Ciudad"}
-                  </small>
-                  <small className="d-block">
-                    {clienteData.province || "Provincia"} · {clienteData.postalCode || "CP"}
-                  </small>
-                  <small className="d-block">Tel.: {clienteData.phone || "—"}</small>
-                  <small className="d-block">Email: {clienteData.email || "—"}</small>
-                </div>
-              </div>
-            </div>
-
-            <div className="card shadow-sm mb-3">
-              <div className="card-header bg-secondary text-white fw-semibold">
-                Datos del vehículo
-              </div>
-              <div className="card-body">
-                <div className="row g-2">
-                  <div className="col-md-6">
-                    <label className="form-label">Matrícula</label>
-                    <input
-                      className="form-control"
-                      value={vehiculoData.plate}
-                      onChange={(e) => handleVehiculoChange("plate", e.target.value)}
-                    />
-                  </div>
-                  <div className="col-md-6">
-                    <label className="form-label">Kilometraje</label>
-                    <input
-                      className="form-control"
-                      value={vehiculoData.km}
-                      onChange={(e) => handleVehiculoChange("km", e.target.value)}
-                    />
-                  </div>
-                  <div className="col-12">
-                    <label className="form-label">Marca / Modelo</label>
-                    <input
-                      className="form-control"
-                      value={vehiculoData.model}
-                      onChange={(e) => handleVehiculoChange("model", e.target.value)}
-                    />
-                  </div>
-                </div>
-                <div className="vehicle-preview mt-3">
-                  <div className="small text-muted">Vehículo en la factura</div>
-                  <div className="fw-semibold">
-                    {vehiculoData.plate || "Matrícula"} · {vehiculoData.model || "Marca / modelo"}
-                  </div>
-                  <small>Kms: {vehiculoData.km || "—"}</small>
-                </div>
-              </div>
-            </div>
-
-            <div className="card shadow-sm">
-              <div className="card-body d-grid gap-3">
-                <button className="btn btn-success" onClick={guardarFactura}>
-                  <i className="bi bi-save me-2"></i>Guardar factura con estos datos
-                </button>
-                <div className="alert alert-secondary mb-0">
-                  El botón guarda la factura en el backend si está disponible. Si no,
-                  los datos quedan listos para descargarlos o imprimirlos siguiendo
-                  el diseño mostrado.
-                </div>
-              </div>
-            </div>
-
-            {mensaje && (
-              <div className="alert alert-info mt-3 text-center shadow-sm">{mensaje}</div>
-            )}
           </div>
         </div>
       </div>

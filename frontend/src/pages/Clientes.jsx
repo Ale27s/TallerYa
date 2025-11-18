@@ -8,6 +8,9 @@ function Clientes() {
   const [nombre, setNombre] = useState("");
   const [telefono, setTelefono] = useState("");
   const [email, setEmail] = useState("");
+  const [identificacion, setIdentificacion] = useState("");
+  const [direccion, setDireccion] = useState("");
+  const [ciudad, setCiudad] = useState("");
 
   const cargarClientes = async () => {
     try {
@@ -25,11 +28,17 @@ function Clientes() {
         nombre,
         telefono,
         email,
+        identificacion,
+        direccion,
+        ciudad,
       });
       setClientes([...clientes, res.data]);
       setNombre("");
       setTelefono("");
       setEmail("");
+      setIdentificacion("");
+      setDireccion("");
+      setCiudad("");
     } catch {
       alert("Error al agregar cliente");
     }
@@ -74,6 +83,29 @@ function Clientes() {
                 <div className="col-md-4 mb-3">
                   <input
                     className="form-control"
+                    placeholder="Documento / NIT"
+                    value={identificacion}
+                    onChange={(e) => setIdentificacion(e.target.value)}
+                    required
+                  />
+                </div>
+
+                <div className="col-md-4 mb-3">
+                  <input
+                    className="form-control"
+                    placeholder="Correo electrónico"
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    required
+                  />
+                </div>
+              </div>
+
+              <div className="row">
+                <div className="col-md-4 mb-3">
+                  <input
+                    className="form-control"
                     placeholder="Teléfono"
                     value={telefono}
                     onChange={(e) => setTelefono(e.target.value)}
@@ -84,9 +116,20 @@ function Clientes() {
                 <div className="col-md-4 mb-3">
                   <input
                     className="form-control"
-                    placeholder="Correo electrónico"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="Dirección"
+                    value={direccion}
+                    onChange={(e) => setDireccion(e.target.value)}
+                    required
+                  />
+                </div>
+
+                <div className="col-md-4 mb-3">
+                  <input
+                    className="form-control"
+                    placeholder="Ciudad"
+                    value={ciudad}
+                    onChange={(e) => setCiudad(e.target.value)}
+                    required
                   />
                 </div>
               </div>
@@ -107,6 +150,9 @@ function Clientes() {
                 <tr>
                   <th>ID</th>
                   <th>Nombre</th>
+                  <th>Documento / NIT</th>
+                  <th>Ciudad</th>
+                  <th>Dirección</th>
                   <th>Teléfono</th>
                   <th>Email</th>
                   <th>Acciones</th>
@@ -118,6 +164,9 @@ function Clientes() {
                   <tr key={c.id}>
                     <td>{c.id}</td>
                     <td>{c.nombre}</td>
+                    <td>{c.identificacion}</td>
+                    <td>{c.ciudad}</td>
+                    <td>{c.direccion}</td>
                     <td>{c.telefono}</td>
                     <td>{c.email}</td>
                     <td>
@@ -133,7 +182,7 @@ function Clientes() {
 
                 {clientes.length === 0 && (
                   <tr>
-                    <td colSpan="5" className="text-muted">
+                    <td colSpan="8" className="text-muted">
                       No hay clientes registrados
                     </td>
                   </tr>

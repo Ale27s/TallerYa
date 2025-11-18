@@ -1,0 +1,138 @@
+.invoice-layout {
+  display: grid;
+  gap: 1.5rem;
+  grid-template-columns: 2fr 1fr;
+}
+
+.invoice-main,
+.invoice-sidebar {
+  width: 100%;
+}
+
+.invoice-card {
+  border: 1px solid rgba(199, 0, 0, 0.15);
+  border-top: 6px solid #c70000;
+  border-radius: 14px;
+  overflow: hidden;
+}
+
+.invoice-header-row {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 1.5rem;
+}
+
+.invoice-brand {
+  background: linear-gradient(180deg, rgba(199, 0, 0, 0.08), rgba(199, 0, 0, 0.02));
+  border-radius: 12px;
+  padding: 12px;
+  border: 1px dashed rgba(199, 0, 0, 0.4);
+}
+
+.invoice-meta {
+  border: 1px solid rgba(199, 0, 0, 0.25);
+  border-radius: 12px;
+  padding: 12px;
+  background: #fff6f6;
+}
+
+.invoice-meta .form-label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #7a2020;
+}
+
+.meta-title {
+  background: #c70000;
+  color: #fff;
+  padding: 8px 12px;
+  border-radius: 10px;
+  font-weight: 700;
+  margin-bottom: 12px;
+  letter-spacing: 0.5px;
+}
+
+.meta-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 0.75rem;
+}
+
+.invoice-table-wrapper .table-title {
+  font-weight: 700;
+  color: #c70000;
+}
+
+.invoice-table thead th {
+  background: #c70000;
+  color: #fff;
+  border: none;
+  font-size: 0.9rem;
+}
+
+.invoice-table tbody td {
+  vertical-align: middle;
+  background: #fff;
+}
+
+.invoice-table input {
+  background: #f8f8f8;
+}
+
+.invoice-remarks textarea {
+  resize: none;
+}
+
+.invoice-summary {
+  background: #1f1f1f;
+  color: #fff;
+  border-radius: 14px;
+  border: none;
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.25);
+}
+
+.invoice-summary .separator {
+  border-top: 1px dashed rgba(255, 255, 255, 0.35);
+}
+
+.invoice-summary .total-box {
+  background: rgba(199, 0, 0, 0.1);
+  padding: 10px 12px;
+  border-radius: 10px;
+}
+
+.client-preview,
+.vehicle-preview {
+  background: #f6f6f6;
+  border: 1px dashed rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+  padding: 10px 12px;
+}
+
+.client-preview-title {
+  font-weight: 700;
+  color: #c70000;
+  margin-bottom: 6px;
+}
+
+.invoice-sidebar .card-header {
+  letter-spacing: 0.4px;
+}
+
+.vehicle-preview {
+  background: #fff9f2;
+}
+
+.invoice-table-wrapper .btn {
+  border-radius: 30px;
+}
+
+@media (max-width: 1200px) {
+  .invoice-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .invoice-header-row {
+    grid-template-columns: 1fr;
+  }
+}

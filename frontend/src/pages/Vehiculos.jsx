@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import "bootstrap/dist/css/bootstrap.min.css";
-import "bootstrap/dist/js/bootstrap.bundle.min.js";
+import { Modal } from "bootstrap";
 
 function Vehiculos() {
   const [vehiculos, setVehiculos] = useState([]);
@@ -56,9 +56,8 @@ function Vehiculos() {
   const abrirDetalle = (vehiculo) => {
     setVehiculoSeleccionado(vehiculo);
 
-    const modal = new window.bootstrap.Modal(
-      document.getElementById("detalleModal")
-    );
+    const modalElement = document.getElementById("detalleModal");
+    const modal = Modal.getOrCreateInstance(modalElement);
     modal.show();
   };
 

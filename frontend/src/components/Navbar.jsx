@@ -1,12 +1,26 @@
 import { Link, useNavigate, useLocation } from "react-router-dom";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import "bootstrap-icons/font/bootstrap-icons.css";
 
 function Navbar() {
   const navigate = useNavigate();
   const location = useLocation(); // 👈 Nuevo: detecta cambios de ruta
-  const user = JSON.parse(localStorage.getItem("user"));
+  const [user, setUser] = useState(() => JSON.parse(localStorage.getItem("user")));
   const [darkMode, setDarkMode] = useState(localStorage.getItem("theme") === "dark");
+
+  const isLogged = Boolean(user);
+  const isCliente = user?.rol === "CLIENTE";
+  const homePath = isCliente ? "/cliente" : "/";
+
+  useEffect(() => {
+    const syncUser = () => {
+      const stored = localStorage.getItem("user");
+      setUser(stored ? JSON.parse(stored) : null);
+    };
+
+    window.addEventListener("storage", syncUser);
+    return () => window.removeEventListener("storage", syncUser);
+  }, []);
 
   useEffect(() => {
     document.body.setAttribute("data-bs-theme", darkMode ? "dark" : "light");
@@ -23,8 +37,36 @@ function Navbar() {
 
   const handleLogout = () => {
     localStorage.removeItem("user");
+    setUser(null);
     navigate("/login");
   };
+
+  const serviceLinks = useMemo(() => {
+    const baseLinks = [
+      { label: "Agendar cita", to: "/citas" },
+      { label: isCliente ? "Estado del vehículo" : "Vehículos", to: "/vehiculos" },
+    ];
+
+    if (!isCliente) {
+      baseLinks.push({ label: "Facturación", to: "/facturacion" });
+    }
+
+    return baseLinks;
+  }, [isCliente]);
+
+  const gestionLinks = useMemo(() => {
+    if (!isLogged || isCliente) return [];
+
+    return [
+      { label: "Panel de control", to: "/dashboard" },
+      { label: "Personal", to: "/personal" },
+      { label: "Clientes", to: "/clientes" },
+      { label: "Mecánicos", to: "/mecanico" },
+      { label: "Citas", to: "/citas" },
+      { label: "Vehículos", to: "/vehiculos" },
+      { label: "Facturación", to: "/facturacion" },
+    ];
+  }, [isCliente, isLogged]);
 
   return (
     <nav
@@ -35,7 +77,7 @@ function Navbar() {
     >
       <div className="container-fluid">
         {/* LOGO */}
-        <Link className="navbar-brand fw-bold text-danger" to="/">
+        <Link className="navbar-brand fw-bold text-danger" to={homePath}>
           <i className="bi bi-wrench-adjustable me-2"></i> TallerYa
         </Link>
 
@@ -55,7 +97,7 @@ function Navbar() {
 
             {/* Inicio */}
             <li className="nav-item">
-              <Link className="nav-link" to="/">
+              <Link className="nav-link" to={homePath}>
                 INICIO
               </Link>
             </li>
@@ -72,11 +114,39 @@ function Navbar() {
                 SERVICIOS
               </Link>
               <ul className="dropdown-menu shadow border-0">
-                <li><Link className="dropdown-item" to="/citas">Agendar cita</Link></li>
-                <li><Link className="dropdown-item" to="/vehiculos">Estado del vehículo</Link></li>
-                <li><Link className="dropdown-item" to="/facturacion">Facturación</Link></li>
+                {serviceLinks.map((link) => (
+                  <li key={link.to}>
+                    <Link className="dropdown-item" to={link.to}>
+                      {link.label}
+                    </Link>
+                  </li>
+                ))}
               </ul>
             </li>
+
+            {/* Gestión interna para staff */}
+            {gestionLinks.length > 0 && (
+              <li className="nav-item dropdown">
+                <Link
+                  className="nav-link dropdown-toggle"
+                  to="#"
+                  id="gestionDropdown"
+                  role="button"
+                  data-bs-toggle="dropdown"
+                >
+                  GESTIÓN
+                </Link>
+                <ul className="dropdown-menu shadow border-0">
+                  {gestionLinks.map((link) => (
+                    <li key={link.to}>
+                      <Link className="dropdown-item" to={link.to}>
+                        {link.label}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </li>
+            )}
 
             {/* Precios */}
             <li className="nav-item">
@@ -120,23 +190,35 @@ function Navbar() {
             ></i>
           </div>
 
-          {/* 🔹 BOTÓN LOGIN / LOGOUT */}
-          <div className="d-flex">
-            {!user ? (
-              <button
-                className="btn btn-outline-danger"
-                onClick={() => navigate("/login")}
-              >
-                Entrar
-              </button>
-            ) : (
-              <button
-                className="btn btn-outline-danger"
-                onClick={handleLogout}
-              >
-                Cerrar sesión
-              </button>
+          {/* 🔹 Información de usuario y login/logout */}
+          <div className="d-flex align-items-center">
+            {user && (
+              <div className="text-end me-3">
+                <div className="small text-muted">Sesión activa</div>
+                <div className="fw-bold text-uppercase">{user.username}</div>
+                <span className="badge rounded-pill text-bg-light border border-danger text-danger">
+                  {user.rol}
+                </span>
+              </div>
             )}
+
+            <div className="d-flex">
+              {!user ? (
+                <button
+                  className="btn btn-outline-danger"
+                  onClick={() => navigate("/login")}
+                >
+                  Entrar
+                </button>
+              ) : (
+                <button
+                  className="btn btn-outline-danger"
+                  onClick={handleLogout}
+                >
+                  Cerrar sesión
+                </button>
+              )}
+            </div>
           </div>
         </div>
       </div>

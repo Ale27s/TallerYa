@@ -129,15 +129,15 @@ function Navbar() {
 
             {/* Servicios */}
             <li className="nav-item dropdown">
-              <Link
-                className="nav-link dropdown-toggle"
-                to="#"
+              <button
+                className="nav-link dropdown-toggle bg-transparent border-0"
+                type="button"
                 id="servicesDropdown"
-                role="button"
                 data-bs-toggle="dropdown"
+                aria-expanded="false"
               >
                 SERVICIOS
-              </Link>
+              </button>
               <ul className="dropdown-menu shadow border-0">
                 {serviceLinks.map((link) => (
                   <li key={link.to}>
@@ -152,15 +152,15 @@ function Navbar() {
             {/* Gestión interna para staff */}
             {gestionLinks.length > 0 && (
               <li className="nav-item dropdown">
-                <Link
-                  className="nav-link dropdown-toggle"
-                  to="#"
+                <button
+                  className="nav-link dropdown-toggle bg-transparent border-0"
+                  type="button"
                   id="gestionDropdown"
-                  role="button"
                   data-bs-toggle="dropdown"
+                  aria-expanded="false"
                 >
                   GESTIÓN
-                </Link>
+                </button>
                 <ul className="dropdown-menu shadow border-0">
                   {gestionLinks.map((link) => (
                     <li key={link.to}>

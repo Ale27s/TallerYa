@@ -1,5 +1,5 @@
 import { Link, useNavigate, useLocation } from "react-router-dom";
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useRef } from "react";
 import "bootstrap-icons/font/bootstrap-icons.css";
 
 function Navbar() {
@@ -7,6 +7,7 @@ function Navbar() {
   const location = useLocation(); // 👈 Nuevo: detecta cambios de ruta
   const [user, setUser] = useState(() => JSON.parse(localStorage.getItem("user")));
   const [darkMode, setDarkMode] = useState(localStorage.getItem("theme") === "dark");
+  const navRef = useRef(null);
 
   const isLogged = Boolean(user);
   const isCliente = user?.rol === "CLIENTE";
@@ -26,6 +27,29 @@ function Navbar() {
     document.body.setAttribute("data-bs-theme", darkMode ? "dark" : "light");
     localStorage.setItem("theme", darkMode ? "dark" : "light");
   }, [darkMode]);
+
+  // Mantiene un relleno superior en el body para que el contenido no quede oculto tras el navbar fijo
+  useEffect(() => {
+    const updateBodyOffset = () => {
+      if (navRef.current) {
+        document.body.style.paddingTop = `${navRef.current.offsetHeight}px`;
+      }
+    };
+
+    updateBodyOffset();
+    window.addEventListener("resize", updateBodyOffset);
+
+    return () => {
+      window.removeEventListener("resize", updateBodyOffset);
+      document.body.style.paddingTop = "";
+    };
+  }, []);
+
+  useEffect(() => {
+    if (navRef.current) {
+      document.body.style.paddingTop = `${navRef.current.offsetHeight}px`;
+    }
+  }, [user, isCliente, darkMode]);
 
   // 👇 NUEVO: cierra el menú colapsable cuando se cambia de página
   useEffect(() => {
@@ -70,7 +94,8 @@ function Navbar() {
 
   return (
     <nav
-      className={`navbar navbar-expand-lg ${
+      ref={navRef}
+      className={`navbar navbar-expand-lg fixed-top ${
         darkMode ? "navbar-dark bg-dark" : "navbar-light bg-light"
       } shadow-sm`}
       style={{ borderBottom: "3px solid #c70000" }}

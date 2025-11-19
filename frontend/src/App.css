@@ -164,9 +164,9 @@ html, body {
    🌐 PÁGINAS A PANTALLA COMPLETA (SIN SIDEBAR)
    ============================================================ */
 .content-wrapper {
-  width: min(1400px, 100%);
+  width: 100%;
   min-height: calc(100vh - 140px);
-  margin: 0 auto;
+  margin: 0;
   padding: 120px 2rem 3rem;
   background-color: var(--bs-body-bg);
   color: var(--bs-body-color);
@@ -185,7 +185,7 @@ html, body {
 
 .content-wrapper-full {
   /* ✅ Modificado para coincidir con calendar-fullscreen */
-  width: 97vw;
+  width: 100%;
   min-height: 100vh;
   padding: 40px 0;
   background-color: var(--bs-body-bg);
@@ -253,7 +253,7 @@ html, body {
    ============================================================ */
 .calendar-wrapper {
   /* ✅ Modificado para coincidir con calendar-fullscreen */
-  width: 97vw;
+  width: 100%;
   min-height: calc(100vh - 150px);
   display: flex;
   justify-content: center;
@@ -265,7 +265,7 @@ html, body {
 }
 
 .calendar-card {
-  width: 95vw;
+  width: 100%;
   max-width: 1600px;
   margin: 0 auto;
   border-radius: 10px;
@@ -283,7 +283,7 @@ html, body {
    🧭 Calendario fullscreen con barra fija
    ========================================= */
 .calendar-fullscreen {
-  width: 97vw;
+  width: 100%;
   min-height: 100vh;
   background-color: var(--bs-body-bg);
   overflow-x: hidden;
@@ -302,7 +302,7 @@ html, body {
 }
 
 .calendar-container {
-  width: 95vw;
+  width: 100%;
   max-width: 1500px;
   background-color: var(--bs-card-bg);
   border-radius: 12px;
@@ -372,7 +372,7 @@ html, body {
    🧭 Calendario fullscreen con barra fija
    ========================================= */
 .calendar-fullscreen {
-  width: 97vw;
+  width: 100%;
   min-height: 100vh;
   background-color: var(--bs-body-bg);
   overflow-x: hidden;
@@ -393,7 +393,7 @@ html, body {
 
 /* Contenedor principal del calendario */
 .calendar-container {
-  width: 95vw;
+  width: 100%;
   max-width: 1500px;
   background-color: var(--bs-card-bg);
   border-radius: 12px;

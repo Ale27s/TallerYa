@@ -16,12 +16,15 @@ function Citas() {
   const [user] = useState(() => JSON.parse(localStorage.getItem("user")));
   const [modalData, setModalData] = useState({
     id: null,
-    cliente: "",
+    cliente_nombre: "",
     servicio: "",
     fecha: "",
     hora: "",
     estado: "PENDIENTE",
     vehiculo: "",
+    gravedad: "MEDIA",
+    prioridad: "NORMAL",
+    tiempo_estimado: 1,
   });
 
   // 🔹 Cargar citas desde backend
@@ -30,10 +33,15 @@ function Citas() {
       const res = await axios.get("http://127.0.0.1:8000/api/citas/");
       const eventos = res.data.map((cita) => ({
         id: cita.id,
-        title: `${cita.cliente_nombre} - ${cita.servicio}`,
-        start: cita.fecha,
-        end: cita.hora_fin || cita.fecha,
+        title: `${cita.cliente_nombre || "Sin cliente"} - ${cita.servicio}`,
+        start: cita.hora ? `${cita.fecha}T${cita.hora}` : cita.fecha,
+        end: cita.hora_fin || (cita.hora ? `${cita.fecha}T${cita.hora}` : cita.fecha),
         estado: cita.estado,
+        gravedad: cita.gravedad,
+        prioridad: cita.prioridad,
+        tiempo_estimado: cita.tiempo_estimado,
+        cliente_nombre: cita.cliente_nombre,
+        vehiculo: cita.vehiculo,
         backgroundColor:
           cita.estado === "CONFIRMADA"
             ? "#28a745"
@@ -57,7 +65,7 @@ function Citas() {
         .then((res) => setVehiculosCliente(res.data))
         .catch(() => setVehiculosCliente([]));
     }
-  }, []);
+  }, [user?.rol]);
 
   // 🔹 Filtro de citas
   const citasFiltradas = citas.filter((c) => {
@@ -73,12 +81,15 @@ function Citas() {
   const abrirModalNueva = (info) => {
     setModalData({
       id: null,
-      cliente: user?.username || "",
+      cliente_nombre: user?.username || "",
       servicio: "",
       fecha: info.dateStr,
       hora: "",
       estado: "PENDIENTE",
       vehiculo: "",
+      gravedad: "MEDIA",
+      prioridad: "NORMAL",
+      tiempo_estimado: 1,
     });
     const modal = new window.bootstrap.Modal(
       document.getElementById("modalCita")
@@ -91,12 +102,16 @@ function Citas() {
     const evento = clickInfo.event;
     setModalData({
       id: evento.id,
-      cliente: evento.title.split(" - ")[0],
+      cliente_nombre:
+        evento.extendedProps.cliente_nombre || evento.title.split(" - ")[0],
       servicio: evento.title.split(" - ")[1],
       fecha: evento.startStr.split("T")[0],
       hora: evento.startStr.split("T")[1]?.substring(0, 5) || "",
       estado: evento.extendedProps.estado || "PENDIENTE",
       vehiculo: evento.extendedProps.vehiculo || "",
+      gravedad: evento.extendedProps.gravedad || "MEDIA",
+      prioridad: evento.extendedProps.prioridad || "NORMAL",
+      tiempo_estimado: evento.extendedProps.tiempo_estimado || 1,
     });
     const modal = new window.bootstrap.Modal(
       document.getElementById("modalCita")
@@ -108,14 +123,19 @@ function Citas() {
   const guardarCita = async (e) => {
     e.preventDefault();
     try {
+      const payload = {
+        ...modalData,
+        vehiculo: modalData.vehiculo || null,
+        tiempo_estimado: modalData.tiempo_estimado || 1,
+      };
       if (modalData.id) {
         await axios.put(
           `http://127.0.0.1:8000/api/citas/${modalData.id}/`,
-          modalData
+          payload
         );
         setMensaje("✅ Cita actualizada correctamente");
       } else {
-        await axios.post("http://127.0.0.1:8000/api/citas/", modalData);
+        await axios.post("http://127.0.0.1:8000/api/citas/", payload);
         setMensaje("✅ Cita creada correctamente");
       }
       cargarCitas();
@@ -181,6 +201,12 @@ function Citas() {
             <i className="bi bi-plus-circle me-1"></i> Nueva Cita
           </button>
         </div>
+
+        {mensaje && (
+          <div className="alert alert-info mt-3 mb-0" role="alert">
+            {mensaje}
+          </div>
+        )}
       </div>
 
       {/* Calendario principal */}
@@ -237,9 +263,12 @@ function Citas() {
                   <input
                     type="text"
                     className="form-control"
-                    value={modalData.cliente}
+                    value={modalData.cliente_nombre}
                     onChange={(e) =>
-                      setModalData({ ...modalData, cliente: e.target.value })
+                      setModalData({
+                        ...modalData,
+                        cliente_nombre: e.target.value,
+                      })
                     }
                     required
                     disabled={user?.rol === "CLIENTE"}
@@ -279,6 +308,36 @@ function Citas() {
                 </div>
                 <div className="row">
                   <div className="col-md-6 mb-3">
+                    <label className="form-label">Gravedad</label>
+                    <select
+                      className="form-select"
+                      value={modalData.gravedad}
+                      onChange={(e) =>
+                        setModalData({ ...modalData, gravedad: e.target.value })
+                      }
+                    >
+                      <option value="LEVE">Leve</option>
+                      <option value="MEDIA">Media</option>
+                      <option value="ALTA">Alta</option>
+                    </select>
+                  </div>
+                  <div className="col-md-6 mb-3">
+                    <label className="form-label">Prioridad</label>
+                    <select
+                      className="form-select"
+                      value={modalData.prioridad}
+                      onChange={(e) =>
+                        setModalData({ ...modalData, prioridad: e.target.value })
+                      }
+                    >
+                      <option value="NORMAL">Normal</option>
+                      <option value="PRIORITARIA">Prioritaria</option>
+                      <option value="URGENTE">Urgente</option>
+                    </select>
+                  </div>
+                </div>
+                <div className="row">
+                  <div className="col-md-6 mb-3">
                     <label className="form-label">Fecha</label>
                     <input
                       type="date"
@@ -301,6 +360,21 @@ function Citas() {
                       }
                     />
                   </div>
+                </div>
+                <div className="mb-3">
+                  <label className="form-label">Tiempo estimado (horas)</label>
+                  <input
+                    type="number"
+                    min="1"
+                    className="form-control"
+                    value={modalData.tiempo_estimado}
+                    onChange={(e) =>
+                      setModalData({
+                        ...modalData,
+                        tiempo_estimado: Number(e.target.value),
+                      })
+                    }
+                  />
                 </div>
                 <div className="mb-3">
                   <label className="form-label">Estado</label>

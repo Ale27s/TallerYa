@@ -1,4 +1,5 @@
 from rest_framework import generics
+from rest_framework.permissions import IsAuthenticated
 from .serializers import VehiculoSerializer
 from django.http import HttpResponse
 from reportlab.pdfgen import canvas
@@ -6,8 +7,22 @@ from reportlab.lib.pagesizes import A4
 from .models import Vehiculo
 
 class VehiculoListCreateView(generics.ListCreateAPIView):
-    queryset = Vehiculo.objects.all().order_by('-ingreso')
+    permission_classes = [IsAuthenticated]
     serializer_class = VehiculoSerializer
+
+    def get_queryset(self):
+        queryset = Vehiculo.objects.all().order_by('-ingreso')
+        user = self.request.user
+        if user.is_authenticated and getattr(user, 'rol', None) == 'CLIENTE':
+            return queryset.filter(propietario=user)
+        return queryset
+
+    def perform_create(self, serializer):
+        user = self.request.user
+        if getattr(user, 'rol', None) == 'CLIENTE':
+            serializer.save(propietario=user)
+        else:
+            serializer.save()
 
 
 def vehiculo_pdf(request, pk):

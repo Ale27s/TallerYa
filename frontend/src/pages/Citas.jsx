@@ -9,9 +9,11 @@ import "bootstrap/dist/js/bootstrap.bundle.min.js";
 
 function Citas() {
   const [citas, setCitas] = useState([]);
+  const [vehiculosCliente, setVehiculosCliente] = useState([]);
   const [filtroCliente, setFiltroCliente] = useState("");
   const [filtroEstado, setFiltroEstado] = useState("TODAS");
   const [mensaje, setMensaje] = useState("");
+  const [user] = useState(() => JSON.parse(localStorage.getItem("user")));
   const [modalData, setModalData] = useState({
     id: null,
     cliente: "",
@@ -19,6 +21,7 @@ function Citas() {
     fecha: "",
     hora: "",
     estado: "PENDIENTE",
+    vehiculo: "",
   });
 
   // 🔹 Cargar citas desde backend
@@ -48,6 +51,12 @@ function Citas() {
 
   useEffect(() => {
     cargarCitas();
+    if (user?.rol === "CLIENTE") {
+      axios
+        .get("http://127.0.0.1:8000/api/vehiculos/listar/", { withCredentials: true })
+        .then((res) => setVehiculosCliente(res.data))
+        .catch(() => setVehiculosCliente([]));
+    }
   }, []);
 
   // 🔹 Filtro de citas
@@ -64,11 +73,12 @@ function Citas() {
   const abrirModalNueva = (info) => {
     setModalData({
       id: null,
-      cliente: "",
+      cliente: user?.username || "",
       servicio: "",
       fecha: info.dateStr,
       hora: "",
       estado: "PENDIENTE",
+      vehiculo: "",
     });
     const modal = new window.bootstrap.Modal(
       document.getElementById("modalCita")
@@ -86,6 +96,7 @@ function Citas() {
       fecha: evento.startStr.split("T")[0],
       hora: evento.startStr.split("T")[1]?.substring(0, 5) || "",
       estado: evento.extendedProps.estado || "PENDIENTE",
+      vehiculo: evento.extendedProps.vehiculo || "",
     });
     const modal = new window.bootstrap.Modal(
       document.getElementById("modalCita")
@@ -231,8 +242,29 @@ function Citas() {
                       setModalData({ ...modalData, cliente: e.target.value })
                     }
                     required
+                    disabled={user?.rol === "CLIENTE"}
                   />
                 </div>
+                {user?.rol === "CLIENTE" && (
+                  <div className="mb-3">
+                    <label className="form-label">Vehículo</label>
+                    <select
+                      className="form-select"
+                      value={modalData.vehiculo}
+                      onChange={(e) =>
+                        setModalData({ ...modalData, vehiculo: e.target.value })
+                      }
+                      required
+                    >
+                      <option value="">Selecciona tu vehículo</option>
+                      {vehiculosCliente.map((vehiculo) => (
+                        <option key={vehiculo.id} value={vehiculo.id}>
+                          {vehiculo.marca} {vehiculo.modelo} - {vehiculo.placa}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                )}
                 <div className="mb-3">
                   <label className="form-label">Servicio</label>
                   <input

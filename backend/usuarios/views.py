@@ -12,14 +12,25 @@ class RegisterView(views.APIView):
         password = request.data.get('password')
         telefono = request.data.get('telefono')
 
-        if not username or not password:
+        if not email or not password:
             return Response({"message": "Faltan datos obligatorios"}, status=status.HTTP_400_BAD_REQUEST)
 
-        if Usuario.objects.filter(username=username).exists():
+        if username and Usuario.objects.filter(username=username).exists():
             return Response({"message": "El usuario ya existe"}, status=status.HTTP_400_BAD_REQUEST)
 
+        if Usuario.objects.filter(email=email).exists():
+            return Response({"message": "El correo ya está en uso"}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Si el nombre de usuario no viene, generamos uno a partir del correo
+        final_username = username or email.split('@')[0]
+        counter = 1
+        base_username = final_username
+        while Usuario.objects.filter(username=final_username).exists():
+            counter += 1
+            final_username = f"{base_username}{counter}"
+
         usuario = Usuario.objects.create_user(
-            username=username,
+            username=final_username,
             email=email,
             password=password,
             telefono=telefono,

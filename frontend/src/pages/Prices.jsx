@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import "../App.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { initialServicios } from "../data/content";
@@ -6,12 +6,20 @@ import { initialServicios } from "../data/content";
 function Prices() {
   const [categoria, setCategoria] = useState("TODOS");
   const [servicios, setServicios] = useState(initialServicios);
+  const [user, setUser] = useState(() => JSON.parse(localStorage.getItem("user")));
   const [nuevoServicio, setNuevoServicio] = useState({
     nombre: "",
     precio: "",
     categoria: "MECANICA",
     descripcion: "",
   });
+
+  useEffect(() => {
+    const stored = localStorage.getItem("user");
+    setUser(stored ? JSON.parse(stored) : null);
+  }, []);
+
+  const puedeEditar = user?.rol === "JEFE" || user?.rol === "MECANICO";
 
   const categoriasDisponibles = useMemo(
     () => ["TODOS", ...new Set(servicios.map((s) => s.categoria))],
@@ -25,6 +33,7 @@ function Prices() {
 
   const handleAddServicio = (e) => {
     e.preventDefault();
+    if (!puedeEditar) return;
     if (!nuevoServicio.nombre.trim()) return;
 
     const servicioNuevo = {
@@ -110,6 +119,12 @@ function Prices() {
                 Usa este formulario para sumar nuevos servicios o promociones al catálogo.
               </p>
 
+              {!puedeEditar && (
+                <div className="alert alert-warning py-2">
+                  Solo el jefe o un mecánico pueden modificar el listado de precios. El resto de roles tiene acceso de solo lectura.
+                </div>
+              )}
+
               <form className="d-flex flex-column gap-3" onSubmit={handleAddServicio}>
                 <div>
                   <label className="form-label">Nombre</label>
@@ -119,6 +134,7 @@ function Prices() {
                     onChange={(e) => setNuevoServicio({ ...nuevoServicio, nombre: e.target.value })}
                     placeholder="Ej: Cambio de pastillas"
                     required
+                    disabled={!puedeEditar}
                   />
                 </div>
 
@@ -133,6 +149,7 @@ function Prices() {
                       onChange={(e) => setNuevoServicio({ ...nuevoServicio, precio: e.target.value })}
                       placeholder="120000"
                       required
+                      disabled={!puedeEditar}
                     />
                   </div>
 
@@ -142,6 +159,7 @@ function Prices() {
                       className="form-select"
                       value={nuevoServicio.categoria}
                       onChange={(e) => setNuevoServicio({ ...nuevoServicio, categoria: e.target.value })}
+                      disabled={!puedeEditar}
                     >
                       {["MECANICA", "ELECTRICO", "LAVADO", "DETALLADO", "OTROS"].map((cat) => (
                         <option key={cat} value={cat}>
@@ -160,10 +178,11 @@ function Prices() {
                     value={nuevoServicio.descripcion}
                     onChange={(e) => setNuevoServicio({ ...nuevoServicio, descripcion: e.target.value })}
                     placeholder="Incluye breve detalle o condiciones"
+                    disabled={!puedeEditar}
                   />
                 </div>
 
-                <button className="btn btn-danger w-100 fw-semibold" type="submit">
+                <button className="btn btn-danger w-100 fw-semibold" type="submit" disabled={!puedeEditar}>
                   Guardar servicio
                 </button>
               </form>

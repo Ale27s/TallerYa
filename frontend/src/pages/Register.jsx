@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 
 function Register() {
   const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [mensaje, setMensaje] = useState("");
   const navigate = useNavigate();
@@ -13,6 +14,7 @@ function Register() {
     try {
       const res = await axios.post("http://127.0.0.1:8000/api/auth/register/", {
         username,
+        email,
         password,
       });
       setMensaje("✅ Registro exitoso. Ahora podés iniciar sesión.");
@@ -39,15 +41,29 @@ function Register() {
         <form onSubmit={handleSubmit}>
           <div className="mb-3">
             <label className="form-label fw-bold">
-              <i className="bi bi-person-fill me-2 text-danger"></i>Usuario
+              <i className="bi bi-envelope-fill me-2 text-danger"></i>Correo electrónico
+            </label>
+            <input
+              className="form-control"
+              type="email"
+              placeholder="correo@ejemplo.com"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
+          </div>
+
+          <div className="mb-3">
+            <label className="form-label fw-bold">
+              <i className="bi bi-person-fill me-2 text-danger"></i>Usuario (opcional)
             </label>
             <input
               className="form-control"
               placeholder="Ej: juanperez"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
-              required
             />
+            <small className="text-muted">Si lo dejas vacío, usaremos tu correo para crear uno.</small>
           </div>
 
           <div className="mb-3">

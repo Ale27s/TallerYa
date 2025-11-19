@@ -1,9 +1,10 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import "../App.css";
 import { initialNoticias } from "../data/content";
 
 function Noticias() {
   const [listaNoticias, setListaNoticias] = useState(initialNoticias);
+  const [user, setUser] = useState(() => JSON.parse(localStorage.getItem("user")));
   const [nuevaNoticia, setNuevaNoticia] = useState({
     titulo: "",
     resumen: "",
@@ -11,8 +12,16 @@ function Noticias() {
     enlace: "",
   });
 
+  useEffect(() => {
+    const stored = localStorage.getItem("user");
+    setUser(stored ? JSON.parse(stored) : null);
+  }, []);
+
+  const puedePublicar = user?.rol === "JEFE" || user?.rol === "MECANICO";
+
   const handleAddNoticia = (e) => {
     e.preventDefault();
+    if (!puedePublicar) return;
     if (!nuevaNoticia.titulo.trim() || !nuevaNoticia.resumen.trim()) return;
 
     setListaNoticias((prev) => [
@@ -44,6 +53,12 @@ function Noticias() {
                 Agrega comunicados, promociones o eventos para mantener actualizada la portada.
               </p>
 
+              {!puedePublicar && (
+                <div className="alert alert-warning py-2">
+                  Solo el jefe o un mecánico pueden publicar novedades. Tu rol actual es de solo lectura.
+                </div>
+              )}
+
               <form className="d-flex flex-column gap-3" onSubmit={handleAddNoticia}>
                 <div>
                   <label className="form-label">Título</label>
@@ -53,6 +68,7 @@ function Noticias() {
                     onChange={(e) => setNuevaNoticia({ ...nuevaNoticia, titulo: e.target.value })}
                     placeholder="Ej: Nuevo horario de atención"
                     required
+                    disabled={!puedePublicar}
                   />
                 </div>
 
@@ -65,6 +81,7 @@ function Noticias() {
                     onChange={(e) => setNuevaNoticia({ ...nuevaNoticia, resumen: e.target.value })}
                     placeholder="Describe brevemente la novedad"
                     required
+                    disabled={!puedePublicar}
                   />
                 </div>
 
@@ -77,6 +94,7 @@ function Noticias() {
                       value={nuevaNoticia.fecha}
                       onChange={(e) => setNuevaNoticia({ ...nuevaNoticia, fecha: e.target.value })}
                       placeholder="Ej: 05 Abr 2024"
+                      disabled={!puedePublicar}
                     />
                   </div>
                   <div className="col-12 col-md-6">
@@ -87,11 +105,12 @@ function Noticias() {
                       value={nuevaNoticia.enlace}
                       onChange={(e) => setNuevaNoticia({ ...nuevaNoticia, enlace: e.target.value })}
                       placeholder="https://"
+                      disabled={!puedePublicar}
                     />
                   </div>
                 </div>
 
-                <button className="btn btn-danger w-100 fw-semibold" type="submit">
+                <button className="btn btn-danger w-100 fw-semibold" type="submit" disabled={!puedePublicar}>
                   Publicar
                 </button>
               </form>

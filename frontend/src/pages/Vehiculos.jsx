@@ -8,26 +8,46 @@ function Vehiculos() {
   const [filtroEstado, setFiltroEstado] = useState("TODOS");
   const [busqueda, setBusqueda] = useState("");
   const [vehiculoSeleccionado, setVehiculoSeleccionado] = useState(null);
+  const [user, setUser] = useState(() => JSON.parse(localStorage.getItem("user")));
+  const [nuevoVehiculo, setNuevoVehiculo] = useState({ marca: "", modelo: "", anio: "", placa: "" });
+  const isCliente = user?.rol === "CLIENTE";
 
   // 🔹 Cargar vehículos desde el backend
-  useEffect(() => {
+  const cargarVehiculos = () => {
     axios
-      .get("http://127.0.0.1:8000/api/vehiculos/listar/")
+      .get("http://127.0.0.1:8000/api/vehiculos/listar/", { withCredentials: true })
       .then((res) => setVehiculos(res.data))
       .catch(() => console.log("Error al cargar vehículos"));
+  };
+
+  useEffect(() => {
+    const stored = localStorage.getItem("user");
+    setUser(stored ? JSON.parse(stored) : null);
+    cargarVehiculos();
   }, []);
+
+  const handleCrearVehiculo = async (e) => {
+    e.preventDefault();
+    try {
+      await axios.post("http://127.0.0.1:8000/api/vehiculos/listar/", nuevoVehiculo, { withCredentials: true });
+      setNuevoVehiculo({ marca: "", modelo: "", anio: "", placa: "" });
+      cargarVehiculos();
+    } catch (error) {
+      console.error("No se pudo registrar el vehículo", error);
+    }
+  };
 
   // 🔹 Filtros + búsqueda
   const vehiculosFiltrados = vehiculos.filter((v) => {
     const palabra = busqueda.toLowerCase();
 
-    const coincideEstado =
-      filtroEstado === "TODOS" || v.estado === filtroEstado;
+    const coincideEstado = filtroEstado === "TODOS" || v.estado === filtroEstado;
 
     const coincideBusqueda =
-      v.cliente_nombre?.toLowerCase().includes(palabra) ||
+      v.propietario_nombre?.toLowerCase().includes(palabra) ||
       v.marca?.toLowerCase().includes(palabra) ||
-      v.modelo?.toLowerCase().includes(palabra);
+      v.modelo?.toLowerCase().includes(palabra) ||
+      v.placa?.toLowerCase().includes(palabra);
 
     return coincideEstado && coincideBusqueda;
   });
@@ -63,7 +83,7 @@ function Vehiculos() {
               <input
                 type="text"
                 className="form-control"
-                placeholder="🔍 Buscar por cliente, marca o modelo..."
+                placeholder="🔍 Buscar por propietario, marca o modelo..."
                 value={busqueda}
                 onChange={(e) => setBusqueda(e.target.value)}
               />
@@ -90,6 +110,60 @@ function Vehiculos() {
           </div>
         </div>
 
+        {isCliente && (
+          <div className="card p-3 shadow-sm border-0 mb-4">
+            <h5 className="text-danger fw-bold mb-3">
+              <i className="bi bi-plus-circle me-2"></i>Registrar mi vehículo
+            </h5>
+            <form className="row g-3" onSubmit={handleCrearVehiculo}>
+              <div className="col-md-3">
+                <input
+                  className="form-control"
+                  placeholder="Marca"
+                  value={nuevoVehiculo.marca}
+                  onChange={(e) => setNuevoVehiculo({ ...nuevoVehiculo, marca: e.target.value })}
+                  required
+                />
+              </div>
+              <div className="col-md-3">
+                <input
+                  className="form-control"
+                  placeholder="Modelo"
+                  value={nuevoVehiculo.modelo}
+                  onChange={(e) => setNuevoVehiculo({ ...nuevoVehiculo, modelo: e.target.value })}
+                  required
+                />
+              </div>
+              <div className="col-md-2">
+                <input
+                  className="form-control"
+                  type="number"
+                  min="1900"
+                  max={new Date().getFullYear() + 1}
+                  placeholder="Año"
+                  value={nuevoVehiculo.anio}
+                  onChange={(e) => setNuevoVehiculo({ ...nuevoVehiculo, anio: e.target.value })}
+                  required
+                />
+              </div>
+              <div className="col-md-2">
+                <input
+                  className="form-control"
+                  placeholder="Placa"
+                  value={nuevoVehiculo.placa}
+                  onChange={(e) => setNuevoVehiculo({ ...nuevoVehiculo, placa: e.target.value })}
+                  required
+                />
+              </div>
+              <div className="col-md-2 d-grid">
+                <button className="btn btn-danger" type="submit">
+                  Guardar
+                </button>
+              </div>
+            </form>
+          </div>
+        )}
+
         {/* Tabla */}
         <div className="card p-3 shadow-sm border-0">
           {vehiculosFiltrados.length === 0 ? (
@@ -102,13 +176,13 @@ function Vehiculos() {
                 <thead className="table-danger">
                   <tr>
                     <th>ID</th>
-                    <th>Cliente</th>
+                    <th>Propietario</th>
                     <th>Marca</th>
                     <th>Modelo</th>
+                    <th>Año</th>
+                    <th>Placa</th>
                     <th>Estado</th>
-                    <th>Tiempo Mora</th>
-                    <th>Hechos</th>
-                    <th>Pendientes</th>
+                    <th>Mora</th>
                     <th>Acciones</th>
                   </tr>
                 </thead>
@@ -117,17 +191,21 @@ function Vehiculos() {
                   {vehiculosFiltrados.map((v) => (
                     <tr key={v.id}>
                       <td>{v.id}</td>
-                      <td>{v.cliente_nombre || "—"}</td>
+                      <td>{v.propietario_nombre || "—"}</td>
                       <td>{v.marca}</td>
                       <td>{v.modelo}</td>
+                      <td>{v.anio}</td>
+                      <td>{v.placa}</td>
 
                       <td>
                         <span
-                          className={`badge ${
+                          className={`badge rounded-pill ${
                             v.estado === "EN_TALLER"
-                              ? "bg-warning text-dark"
+                              ? "bg-danger"
                               : v.estado === "FINALIZADO"
                               ? "bg-success"
+                              : v.estado === "EN_SERVICIO"
+                              ? "bg-warning text-dark"
                               : "bg-secondary"
                           }`}
                         >
@@ -135,9 +213,7 @@ function Vehiculos() {
                         </span>
                       </td>
 
-                      <td>{v.tiempo_mora || "0 días"}</td>
-                      <td>{v.servicios_hechos || 0}</td>
-                      <td>{v.servicios_pendientes || 0}</td>
+                      <td>{v.dias_mora || 0} días</td>
 
                       <td>
                         <button
@@ -185,35 +261,22 @@ function Vehiculos() {
                   <h5 className="fw-bold mb-2">
                     🚗 {vehiculoSeleccionado.marca} {vehiculoSeleccionado.modelo}
                     <span className="text-muted">
-                      ({vehiculoSeleccionado.anho})
+                      ({vehiculoSeleccionado.anio})
                     </span>
                   </h5>
 
                   <p>
-                    <strong>Cliente:</strong> {vehiculoSeleccionado.cliente_nombre}
+                    <strong>Propietario:</strong> {vehiculoSeleccionado.propietario_nombre || "—"}
+                  </p>
+                  <p>
+                    <strong>Placa:</strong> {vehiculoSeleccionado.placa}
                   </p>
                   <p>
                     <strong>Estado:</strong> {vehiculoSeleccionado.estado}
                   </p>
                   <p>
-                    <strong>Hechos:</strong>{" "}
-                    {vehiculoSeleccionado.servicios_hechos || 0}
-                  </p>
-                  <p>
-                    <strong>Pendientes:</strong>{" "}
-                    {vehiculoSeleccionado.servicios_pendientes || 0}
-                  </p>
-                  <p>
                     <strong>Mora:</strong>{" "}
-                    {vehiculoSeleccionado.tiempo_mora || "Sin retraso"}
-                  </p>
-
-                  <hr />
-
-                  <p>
-                    <strong>Observaciones:</strong>{" "}
-                    {vehiculoSeleccionado.observaciones ||
-                      "Sin observaciones."}
+                    {(vehiculoSeleccionado.dias_mora || 0) + " días"}
                   </p>
                 </>
               ) : (

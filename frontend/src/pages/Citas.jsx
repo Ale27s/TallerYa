@@ -5,7 +5,7 @@ import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import interactionPlugin from "@fullcalendar/interaction";
 import "bootstrap/dist/css/bootstrap.min.css";
-import "bootstrap/dist/js/bootstrap.bundle.min.js";
+import { Modal } from "bootstrap";
 
 function Citas() {
   const [citas, setCitas] = useState([]);
@@ -91,9 +91,8 @@ function Citas() {
       prioridad: "NORMAL",
       tiempo_estimado: 1,
     });
-    const modal = new window.bootstrap.Modal(
-      document.getElementById("modalCita")
-    );
+    const modalElement = document.getElementById("modalCita");
+    const modal = Modal.getOrCreateInstance(modalElement);
     modal.show();
   };
 
@@ -113,9 +112,8 @@ function Citas() {
       prioridad: evento.extendedProps.prioridad || "NORMAL",
       tiempo_estimado: evento.extendedProps.tiempo_estimado || 1,
     });
-    const modal = new window.bootstrap.Modal(
-      document.getElementById("modalCita")
-    );
+    const modalElement = document.getElementById("modalCita");
+    const modal = Modal.getOrCreateInstance(modalElement);
     modal.show();
   };
 
@@ -139,9 +137,8 @@ function Citas() {
         setMensaje("✅ Cita creada correctamente");
       }
       cargarCitas();
-      window.bootstrap.Modal.getInstance(
-        document.getElementById("modalCita")
-      ).hide();
+      const modal = Modal.getInstance(document.getElementById("modalCita"));
+      modal?.hide();
     } catch (err) {
       console.error(err);
       setMensaje("❌ Error al guardar la cita");
@@ -157,9 +154,8 @@ function Citas() {
         );
         setMensaje("🗑️ Cita eliminada correctamente");
         cargarCitas();
-        window.bootstrap.Modal.getInstance(
-          document.getElementById("modalCita")
-        ).hide();
+        const modal = Modal.getInstance(document.getElementById("modalCita"));
+        modal?.hide();
       } catch {
         setMensaje("❌ No se pudo eliminar la cita");
       }

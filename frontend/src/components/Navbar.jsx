@@ -7,6 +7,8 @@ function Navbar() {
   const location = useLocation(); // 👈 Nuevo: detecta cambios de ruta
   const [user, setUser] = useState(() => JSON.parse(localStorage.getItem("user")));
   const [darkMode, setDarkMode] = useState(localStorage.getItem("theme") === "dark");
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [openDropdown, setOpenDropdown] = useState(null);
   const navRef = useRef(null);
 
   const isLogged = Boolean(user);
@@ -53,11 +55,17 @@ function Navbar() {
 
   // 👇 NUEVO: cierra el menú colapsable cuando se cambia de página
   useEffect(() => {
-    const navCollapse = document.querySelector(".navbar-collapse");
-    if (navCollapse && navCollapse.classList.contains("show")) {
-      navCollapse.classList.remove("show");
-    }
+    setMenuOpen(false);
+    setOpenDropdown(null);
   }, [location]);
+
+  const toggleMenu = () => {
+    setMenuOpen((prev) => !prev);
+  };
+
+  const toggleDropdown = (key) => {
+    setOpenDropdown((prev) => (prev === key ? null : key));
+  };
 
   const handleLogout = () => {
     localStorage.removeItem("user");
@@ -110,14 +118,19 @@ function Navbar() {
         <button
           className="navbar-toggler border-0"
           type="button"
-          data-bs-toggle="collapse"
-          data-bs-target="#navbarNavDropdown"
+          aria-controls="navbarNavDropdown"
+          aria-expanded={menuOpen}
+          aria-label="Toggle navigation"
+          onClick={toggleMenu}
         >
           <i className="bi bi-list text-danger fs-2"></i>
         </button>
 
         {/* ENLACES */}
-        <div className="collapse navbar-collapse" id="navbarNavDropdown">
+        <div
+          className={`collapse navbar-collapse ${menuOpen ? "show" : ""}`}
+          id="navbarNavDropdown"
+        >
           <ul className="navbar-nav me-auto mb-2 mb-lg-0 fw-semibold">
 
             {/* Inicio */}
@@ -128,20 +141,24 @@ function Navbar() {
             </li>
 
             {/* Servicios */}
-            <li className="nav-item dropdown">
+            <li className={`nav-item dropdown ${openDropdown === "services" ? "show" : ""}`}>
               <button
                 className="nav-link dropdown-toggle bg-transparent border-0"
                 type="button"
                 id="servicesDropdown"
-                data-bs-toggle="dropdown"
-                aria-expanded="false"
+                aria-expanded={openDropdown === "services"}
+                onClick={() => toggleDropdown("services")}
               >
                 SERVICIOS
               </button>
-              <ul className="dropdown-menu shadow border-0">
+              <ul className={`dropdown-menu shadow border-0 ${openDropdown === "services" ? "show" : ""}`}>
                 {serviceLinks.map((link) => (
                   <li key={link.to}>
-                    <Link className="dropdown-item" to={link.to}>
+                    <Link
+                      className="dropdown-item"
+                      to={link.to}
+                      onClick={() => setOpenDropdown(null)}
+                    >
                       {link.label}
                     </Link>
                   </li>
@@ -151,20 +168,30 @@ function Navbar() {
 
             {/* Gestión interna para staff */}
             {gestionLinks.length > 0 && (
-              <li className="nav-item dropdown">
+              <li
+                className={`nav-item dropdown ${openDropdown === "gestion" ? "show" : ""}`}
+              >
                 <button
                   className="nav-link dropdown-toggle bg-transparent border-0"
                   type="button"
                   id="gestionDropdown"
-                  data-bs-toggle="dropdown"
-                  aria-expanded="false"
+                  aria-expanded={openDropdown === "gestion"}
+                  onClick={() => toggleDropdown("gestion")}
                 >
                   GESTIÓN
                 </button>
-                <ul className="dropdown-menu shadow border-0">
+                <ul
+                  className={`dropdown-menu shadow border-0 ${
+                    openDropdown === "gestion" ? "show" : ""
+                  }`}
+                >
                   {gestionLinks.map((link) => (
                     <li key={link.to}>
-                      <Link className="dropdown-item" to={link.to}>
+                      <Link
+                        className="dropdown-item"
+                        to={link.to}
+                        onClick={() => setOpenDropdown(null)}
+                      >
                         {link.label}
                       </Link>
                     </li>

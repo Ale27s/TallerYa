@@ -1,23 +1,42 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import "../App.css";
 import "bootstrap/dist/css/bootstrap.min.css";
+import { initialServicios } from "../data/content";
 
 function Prices() {
   const [categoria, setCategoria] = useState("TODOS");
+  const [servicios, setServicios] = useState(initialServicios);
+  const [nuevoServicio, setNuevoServicio] = useState({
+    nombre: "",
+    precio: "",
+    categoria: "MECANICA",
+    descripcion: "",
+  });
 
-  const servicios = [
-    { id: 1, nombre: "Cambio de aceite y filtros", precio: 120000, categoria: "MECANICA" },
-    { id: 2, nombre: "Alineación y balanceo", precio: 80000, categoria: "MECANICA" },
-    { id: 3, nombre: "Revisión eléctrica", precio: 100000, categoria: "ELECTRICO" },
-    { id: 4, nombre: "Reparación de frenos", precio: 150000, categoria: "MECANICA" },
-    { id: 5, nombre: "Diagnóstico computarizado", precio: 180000, categoria: "ELECTRICO" },
-    { id: 6, nombre: "Lavado completo", precio: 60000, categoria: "LAVADO" },
-  ];
+  const categoriasDisponibles = useMemo(
+    () => ["TODOS", ...new Set(servicios.map((s) => s.categoria))],
+    [servicios]
+  );
 
   const filtrados =
     categoria === "TODOS"
       ? servicios
       : servicios.filter((s) => s.categoria === categoria);
+
+  const handleAddServicio = (e) => {
+    e.preventDefault();
+    if (!nuevoServicio.nombre.trim()) return;
+
+    const servicioNuevo = {
+      ...nuevoServicio,
+      id: Date.now(),
+      precio: Number(nuevoServicio.precio) || 0,
+    };
+
+    setServicios((prev) => [...prev, servicioNuevo]);
+    setNuevoServicio({ nombre: "", precio: "", categoria: "MECANICA", descripcion: "" });
+    setCategoria("TODOS");
+  };
 
   return (
     <div className="content-wrapper-full">
@@ -35,7 +54,7 @@ function Prices() {
 
         {/* Filtros */}
         <div className="d-flex justify-content-center gap-3 mb-4 flex-wrap">
-          {["TODOS", "MECANICA", "ELECTRICO", "LAVADO"].map((cat) => (
+          {categoriasDisponibles.map((cat) => (
             <button
               key={cat}
               className={`btn ${
@@ -50,26 +69,106 @@ function Prices() {
           ))}
         </div>
 
-        {/* Lista de Servicios */}
-        <div className="row justify-content-center">
-          {filtrados.map((s) => (
-            <div
-              key={s.id}
-              className="col-md-5 card p-3 m-2 d-flex justify-content-between align-items-center service-card"
-            >
-              <span className="fw-semibold">{s.nombre}</span>
+        <div className="row g-4">
+          {/* Lista de Servicios */}
+          <div className="col-12 col-xl-7">
+            <div className="row justify-content-center">
+              {filtrados.map((s) => (
+                <div
+                  key={s.id}
+                  className="col-md-6 card p-3 m-2 d-flex justify-content-between align-items-start service-card"
+                >
+                  <div>
+                    <span className="fw-semibold d-block">{s.nombre}</span>
+                    {s.descripcion && (
+                      <small className="text-muted d-block mt-1">{s.descripcion}</small>
+                    )}
+                    <span className="badge bg-danger-subtle text-danger mt-2">{s.categoria}</span>
+                  </div>
 
-              <div className="text-end">
-                <strong className="text-danger me-3">
-                  Gs. {s.precio.toLocaleString()}
-                </strong>
+                  <div className="text-end">
+                    <strong className="text-danger d-block mb-2">
+                      Gs. {s.precio.toLocaleString()}
+                    </strong>
 
-                <a href="/citas" className="btn btn-outline-danger btn-sm">
-                  <i className="bi bi-calendar-check me-1"></i> Agendar
-                </a>
-              </div>
+                    <a href="/citas" className="btn btn-outline-danger btn-sm">
+                      <i className="bi bi-calendar-check me-1"></i> Agendar
+                    </a>
+                  </div>
+                </div>
+              ))}
             </div>
-          ))}
+          </div>
+
+          {/* Formulario para agregar servicios */}
+          <div className="col-12 col-xl-5">
+            <div className="card h-100 p-4">
+              <h5 className="fw-bold mb-3 text-danger">
+                <i className="bi bi-plus-circle me-2"></i>Agregar servicio
+              </h5>
+              <p className="text-muted small">
+                Usa este formulario para sumar nuevos servicios o promociones al catálogo.
+              </p>
+
+              <form className="d-flex flex-column gap-3" onSubmit={handleAddServicio}>
+                <div>
+                  <label className="form-label">Nombre</label>
+                  <input
+                    className="form-control"
+                    value={nuevoServicio.nombre}
+                    onChange={(e) => setNuevoServicio({ ...nuevoServicio, nombre: e.target.value })}
+                    placeholder="Ej: Cambio de pastillas"
+                    required
+                  />
+                </div>
+
+                <div className="row g-3">
+                  <div className="col-12 col-md-6">
+                    <label className="form-label">Precio (Gs.)</label>
+                    <input
+                      type="number"
+                      min="0"
+                      className="form-control"
+                      value={nuevoServicio.precio}
+                      onChange={(e) => setNuevoServicio({ ...nuevoServicio, precio: e.target.value })}
+                      placeholder="120000"
+                      required
+                    />
+                  </div>
+
+                  <div className="col-12 col-md-6">
+                    <label className="form-label">Categoría</label>
+                    <select
+                      className="form-select"
+                      value={nuevoServicio.categoria}
+                      onChange={(e) => setNuevoServicio({ ...nuevoServicio, categoria: e.target.value })}
+                    >
+                      {["MECANICA", "ELECTRICO", "LAVADO", "DETALLADO", "OTROS"].map((cat) => (
+                        <option key={cat} value={cat}>
+                          {cat}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+
+                <div>
+                  <label className="form-label">Descripción (opcional)</label>
+                  <textarea
+                    className="form-control"
+                    rows="3"
+                    value={nuevoServicio.descripcion}
+                    onChange={(e) => setNuevoServicio({ ...nuevoServicio, descripcion: e.target.value })}
+                    placeholder="Incluye breve detalle o condiciones"
+                  />
+                </div>
+
+                <button className="btn btn-danger w-100 fw-semibold" type="submit">
+                  Guardar servicio
+                </button>
+              </form>
+            </div>
+          </div>
         </div>
 
       </div>

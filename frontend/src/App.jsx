@@ -19,6 +19,7 @@ import Vehiculos from "./pages/Vehiculos.jsx";
 import Login from "./pages/Login.jsx";
 import Register from "./pages/Register.jsx";
 import ClienteHome from "./pages/ClienteHome.jsx";
+import Home from "./pages/Home.jsx";
 
 // ✅ Nuevas páginas
 import Prices from "./pages/Prices.jsx";
@@ -38,8 +39,8 @@ function Layout() {
 
   const routes = (
     <Routes>
-      {/* Dashboard */}
-      <Route path="/" element={<Dashboard />} />
+      {/* Página de inicio y dashboard */}
+      <Route path="/" element={<Home />} />
       <Route path="/dashboard" element={<Dashboard />} />
 
       {/* Módulos */}

@@ -9,7 +9,13 @@ function Vehiculos() {
   const [busqueda, setBusqueda] = useState("");
   const [vehiculoSeleccionado, setVehiculoSeleccionado] = useState(null);
   const [user, setUser] = useState(() => JSON.parse(localStorage.getItem("user")));
-  const [nuevoVehiculo, setNuevoVehiculo] = useState({ marca: "", modelo: "", anio: "", placa: "" });
+  const [nuevoVehiculo, setNuevoVehiculo] = useState({
+    marca: "",
+    modelo: "",
+    anio: "",
+    placa: "",
+    propietario_id: "",
+  });
   const isCliente = user?.rol === "CLIENTE";
 
   // 🔹 Cargar vehículos desde el backend
@@ -29,9 +35,24 @@ function Vehiculos() {
   const handleCrearVehiculo = async (e) => {
     e.preventDefault();
     try {
-      await axios.post("http://127.0.0.1:8000/api/vehiculos/listar/", nuevoVehiculo, { withCredentials: true });
-      setNuevoVehiculo({ marca: "", modelo: "", anio: "", placa: "" });
+      const payload = { ...nuevoVehiculo };
+
+      if (!payload.propietario_id) {
+        delete payload.propietario_id;
+      } else {
+        payload.propietario_id = Number(payload.propietario_id);
+      }
+
+      await axios.post("http://127.0.0.1:8000/api/vehiculos/listar/", payload, { withCredentials: true });
+
+      setNuevoVehiculo({ marca: "", modelo: "", anio: "", placa: "", propietario_id: "" });
       cargarVehiculos();
+
+      const modalElement = document.getElementById("crearVehiculoModal");
+      if (modalElement) {
+        const modal = Modal.getInstance(modalElement) || Modal.getOrCreateInstance(modalElement);
+        modal.hide();
+      }
     } catch (error) {
       console.error("No se pudo registrar el vehículo", error);
     }
@@ -101,7 +122,19 @@ function Vehiculos() {
               </select>
             </div>
 
-            <div className="col-md-4 text-end">
+            <div className="col-md-4 text-end d-flex justify-content-end align-items-center gap-2">
+              <button
+                className="btn btn-danger d-flex align-items-center gap-2"
+                type="button"
+                onClick={() => {
+                  const modalElement = document.getElementById("crearVehiculoModal");
+                  const modal = Modal.getOrCreateInstance(modalElement);
+                  modal.show();
+                }}
+              >
+                <i className="bi bi-plus-circle"></i>
+                Agregar vehículo
+              </button>
               <span className="fw-bold text-danger">
                 {vehiculosFiltrados.length} vehículos encontrados
               </span>
@@ -230,6 +263,110 @@ function Vehiculos() {
           )}
         </div>
 
+      </div>
+
+      {/* MODAL CREAR VEHÍCULO */}
+      <div
+        className="modal fade"
+        id="crearVehiculoModal"
+        tabIndex="-1"
+        aria-hidden="true"
+      >
+        <div className="modal-dialog">
+          <div className="modal-content border-0 shadow-lg">
+            <div className="modal-header bg-danger text-white">
+              <h5 className="modal-title">
+                <i className="bi bi-car-front-fill me-2"></i>
+                Registrar vehículo
+              </h5>
+              <button
+                type="button"
+                className="btn-close btn-close-white"
+                data-bs-dismiss="modal"
+                aria-label="Close"
+              ></button>
+            </div>
+
+            <form onSubmit={handleCrearVehiculo}>
+              <div className="modal-body">
+                {!isCliente && (
+                  <div className="mb-3">
+                    <label className="form-label fw-bold">ID del propietario</label>
+                    <input
+                      type="number"
+                      className="form-control"
+                      placeholder="Ej: 12"
+                      value={nuevoVehiculo.propietario_id}
+                      onChange={(e) =>
+                        setNuevoVehiculo({ ...nuevoVehiculo, propietario_id: e.target.value })
+                      }
+                      required
+                    />
+                    <small className="text-muted">
+                      El vehículo se registrará asociado a este cliente.
+                    </small>
+                  </div>
+                )}
+
+                <div className="row g-3">
+                  <div className="col-md-6">
+                    <label className="form-label fw-bold">Marca</label>
+                    <input
+                      className="form-control"
+                      placeholder="Marca"
+                      value={nuevoVehiculo.marca}
+                      onChange={(e) => setNuevoVehiculo({ ...nuevoVehiculo, marca: e.target.value })}
+                      required
+                    />
+                  </div>
+                  <div className="col-md-6">
+                    <label className="form-label fw-bold">Modelo</label>
+                    <input
+                      className="form-control"
+                      placeholder="Modelo"
+                      value={nuevoVehiculo.modelo}
+                      onChange={(e) => setNuevoVehiculo({ ...nuevoVehiculo, modelo: e.target.value })}
+                      required
+                    />
+                  </div>
+                  <div className="col-md-6">
+                    <label className="form-label fw-bold">Año</label>
+                    <input
+                      className="form-control"
+                      type="number"
+                      min="1900"
+                      max={new Date().getFullYear() + 1}
+                      placeholder="Año"
+                      value={nuevoVehiculo.anio}
+                      onChange={(e) => setNuevoVehiculo({ ...nuevoVehiculo, anio: e.target.value })}
+                      required
+                    />
+                  </div>
+                  <div className="col-md-6">
+                    <label className="form-label fw-bold">Placa</label>
+                    <input
+                      className="form-control"
+                      placeholder="Placa"
+                      value={nuevoVehiculo.placa}
+                      onChange={(e) => setNuevoVehiculo({ ...nuevoVehiculo, placa: e.target.value })}
+                      required
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div className="modal-footer">
+                <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">
+                  Cancelar
+                </button>
+                <button type="submit" className="btn btn-danger">
+                  <i className="bi bi-save me-1"></i>
+                  Guardar vehículo
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
       </div>
 
       {/* MODAL */}

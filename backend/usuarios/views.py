@@ -80,6 +80,8 @@ class ListaPersonalView(views.APIView):
 
     def post(self, request):
         username = request.data.get('username')
+        email = request.data.get('email')
+        telefono = request.data.get('telefono')
         rol = request.data.get('rol', 'MECANICO')
 
         if not username:
@@ -94,7 +96,9 @@ class ListaPersonalView(views.APIView):
         personal = Usuario.objects.create_user(
             username=username,
             password=Usuario.objects.make_random_password(),
-            rol=rol
+            rol=rol,
+            email=email,
+            telefono=telefono
         )
 
         return Response(UsuarioSerializer(personal).data, status=status.HTTP_201_CREATED)

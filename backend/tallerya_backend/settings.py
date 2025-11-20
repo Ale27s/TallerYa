@@ -123,6 +123,12 @@ CSRF_TRUSTED_ORIGINS = [
     "http://127.0.0.1:5173",
 ]
 
+# Cookies de sesión/CSRF para que el frontend pueda enviarlas correctamente
+SESSION_COOKIE_SAMESITE = 'Lax'
+SESSION_COOKIE_SECURE = False
+CSRF_COOKIE_SAMESITE = 'Lax'
+CSRF_COOKIE_SECURE = False
+
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.SessionAuthentication',

@@ -1,18 +1,18 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
-
-const API = "http://127.0.0.1:8000/api/auth"; // RUTAS REALES
+import api from "../services/api";
 
 function Personal() {
   const [personal, setPersonal] = useState([]);
   const [nombre, setNombre] = useState("");
+  const [email, setEmail] = useState("");
+  const [telefono, setTelefono] = useState("");
   const [rol, setRol] = useState("MECANICO");
   const [mensaje, setMensaje] = useState("");
 
   // Cargar personal
   const cargarPersonal = async () => {
     try {
-      const res = await axios.get(`${API}/personal/`, { withCredentials: true });
+      const res = await api.get("auth/personal/");
       setPersonal(res.data);
     } catch {
       setMensaje("Error al cargar personal");
@@ -23,16 +23,16 @@ function Personal() {
   const agregarPersonal = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.post(
-        `${API}/personal/`,
-        {
-          username: nombre,
-          rol,
-        },
-        { withCredentials: true }
-      );
+      const res = await api.post("auth/personal/", {
+        username: nombre,
+        email: email || undefined,
+        telefono: telefono || undefined,
+        rol,
+      });
       setPersonal([...personal, res.data]);
       setNombre("");
+      setEmail("");
+      setTelefono("");
       setRol("MECANICO");
       setMensaje("Empleado agregado correctamente");
     } catch {
@@ -43,7 +43,7 @@ function Personal() {
   // Eliminar personal
   const eliminarPersonal = async (id) => {
     try {
-      await axios.delete(`${API}/personal/${id}/`, { withCredentials: true });
+      await api.delete(`auth/personal/${id}/`);
       setPersonal(personal.filter((p) => p.id !== id));
     } catch {
       setMensaje("Error al eliminar empleado");
@@ -82,6 +82,25 @@ function Personal() {
                   />
                 </div>
 
+                <div className="col-md-6 mb-3">
+                  <input
+                    type="email"
+                    className="form-control"
+                    placeholder="Correo (opcional)"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                  />
+                </div>
+
+                <div className="col-md-6 mb-3">
+                  <input
+                    className="form-control"
+                    placeholder="Teléfono (opcional)"
+                    value={telefono}
+                    onChange={(e) => setTelefono(e.target.value)}
+                  />
+                </div>
+
                 <div className="col-md-4 mb-3">
                   <select
                     className="form-select"
@@ -115,6 +134,8 @@ function Personal() {
                   <th>ID</th>
                   <th>Nombre</th>
                   <th>Rol</th>
+                  <th>Correo</th>
+                  <th>Teléfono</th>
                   <th>Acciones</th>
                 </tr>
               </thead>
@@ -124,6 +145,8 @@ function Personal() {
                     <td>{p.id}</td>
                     <td>{p.username}</td>
                     <td>{p.rol}</td>
+                    <td>{p.email || "-"}</td>
+                    <td>{p.telefono || "-"}</td>
                     <td>
                       <button
                         className="btn btn-outline-danger btn-sm"
@@ -137,7 +160,7 @@ function Personal() {
 
                 {personal.length === 0 && (
                   <tr>
-                    <td colSpan="4" className="text-muted">
+                    <td colSpan="6" className="text-muted">
                       No hay personal registrado
                     </td>
                   </tr>

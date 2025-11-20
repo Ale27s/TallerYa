@@ -12,7 +12,7 @@ function Personal() {
   // Cargar personal
   const cargarPersonal = async () => {
     try {
-      const res = await axios.get(`${API}/personal/`);
+      const res = await axios.get(`${API}/personal/`, { withCredentials: true });
       setPersonal(res.data);
     } catch {
       setMensaje("Error al cargar personal");
@@ -23,10 +23,14 @@ function Personal() {
   const agregarPersonal = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.post(`${API}/personal/`, {
-        username: nombre,
-        rol,
-      });
+      const res = await axios.post(
+        `${API}/personal/`,
+        {
+          username: nombre,
+          rol,
+        },
+        { withCredentials: true }
+      );
       setPersonal([...personal, res.data]);
       setNombre("");
       setRol("MECANICO");
@@ -39,7 +43,7 @@ function Personal() {
   // Eliminar personal
   const eliminarPersonal = async (id) => {
     try {
-      await axios.delete(`${API}/personal/${id}/`);
+      await axios.delete(`${API}/personal/${id}/`, { withCredentials: true });
       setPersonal(personal.filter((p) => p.id !== id));
     } catch {
       setMensaje("Error al eliminar empleado");

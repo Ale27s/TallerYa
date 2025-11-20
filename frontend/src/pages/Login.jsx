@@ -11,10 +11,14 @@ function Login() {
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.post("http://127.0.0.1:8000/api/auth/login/", {
-        username,
-        password,
-      });
+      const res = await axios.post(
+        "http://127.0.0.1:8000/api/auth/login/",
+        {
+          username,
+          password,
+        },
+        { withCredentials: true }
+      );
       const user = res.data.user;
       localStorage.setItem("user", JSON.stringify(user));
 

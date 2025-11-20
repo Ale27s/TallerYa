@@ -78,6 +78,27 @@ class ListaPersonalView(views.APIView):
         serializer = UsuarioSerializer(personal, many=True)
         return Response(serializer.data)
 
+    def post(self, request):
+        username = request.data.get('username')
+        rol = request.data.get('rol', 'MECANICO')
+
+        if not username:
+            return Response({"message": "El nombre de usuario es obligatorio"}, status=status.HTTP_400_BAD_REQUEST)
+
+        if rol not in ['JEFE', 'GERENTE', 'MECANICO']:
+            return Response({"message": "Rol no válido para personal"}, status=status.HTTP_400_BAD_REQUEST)
+
+        if Usuario.objects.filter(username=username).exists():
+            return Response({"message": "El usuario ya existe"}, status=status.HTTP_400_BAD_REQUEST)
+
+        personal = Usuario.objects.create_user(
+            username=username,
+            password=Usuario.objects.make_random_password(),
+            rol=rol
+        )
+
+        return Response(UsuarioSerializer(personal).data, status=status.HTTP_201_CREATED)
+
 
 # ✅ Eliminar personal (solo jefe)
 @method_decorator(rol_requerido(['JEFE']), name='dispatch')

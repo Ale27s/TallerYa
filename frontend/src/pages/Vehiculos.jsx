@@ -12,6 +12,10 @@ function Vehiculos() {
   const [user, setUser] = useState(() =>
     JSON.parse(localStorage.getItem("user"))
   );
+  const [confirmDelete, setConfirmDelete] = useState({
+    open: false,
+    vehiculoId: null,
+  });
 
   const [nuevoVehiculo, setNuevoVehiculo] = useState({
     marca: "",
@@ -173,22 +177,28 @@ function Vehiculos() {
     }
   };
 
-  const handleEliminarVehiculo = async (vehiculoId) => {
-    const confirmacion = window.confirm(
-      "¿Seguro que deseas eliminar este vehículo? Esta acción no se puede deshacer."
-    );
+  const solicitarConfirmacionEliminar = (vehiculoId) => {
+    setConfirmDelete({ open: true, vehiculoId });
+  };
 
-    if (!confirmacion) return;
+  const cerrarConfirmacionEliminar = () => {
+    setConfirmDelete({ open: false, vehiculoId: null });
+  };
+
+  const handleEliminarVehiculo = async () => {
+    if (!confirmDelete.vehiculoId) return;
 
     try {
-      await api.delete(`/vehiculos/${vehiculoId}/`);
+      await api.delete(`/vehiculos/${confirmDelete.vehiculoId}/`);
       cargarVehiculos();
       setVehiculoSeleccionado((prev) =>
-        prev && prev.id === vehiculoId ? null : prev
+        prev && prev.id === confirmDelete.vehiculoId ? null : prev
       );
     } catch (error) {
       console.error("No se pudo eliminar el vehículo", error);
       alert("Ocurrió un error al eliminar el vehículo.");
+    } finally {
+      cerrarConfirmacionEliminar();
     }
   };
 
@@ -405,7 +415,7 @@ function Vehiculos() {
                         </button>
                         <button
                           className="btn btn-outline-danger btn-sm ms-2"
-                          onClick={() => handleEliminarVehiculo(v.id)}
+                          onClick={() => solicitarConfirmacionEliminar(v.id)}
                         >
                           <i className="bi bi-trash"></i>
                         </button>
@@ -796,6 +806,32 @@ function Vehiculos() {
           </div>
         </div>
       </div>
+
+      {confirmDelete.open && (
+        <div className="confirm-overlay">
+          <div className="confirm-card">
+            <div className="confirm-icon">
+              <i className="bi bi-exclamation-triangle-fill"></i>
+            </div>
+            <h5>Eliminar vehículo</h5>
+            <p>
+              ¿Seguro que deseas eliminar este vehículo? Esta acción no se puede
+              deshacer.
+            </p>
+            <div className="d-flex gap-2 justify-content-center w-100">
+              <button className="btn btn-danger" onClick={handleEliminarVehiculo}>
+                Eliminar
+              </button>
+              <button
+                className="btn btn-outline-light"
+                onClick={cerrarConfirmacionEliminar}
+              >
+                Cancelar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

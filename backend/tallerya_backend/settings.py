@@ -1,4 +1,5 @@
 from pathlib import Path
+from datetime import timedelta
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -7,7 +8,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # ==========================
 SECRET_KEY = 'django-insecure-%u@jwrdw=06ay3d$zosq@719ublb366&&^uc@8=y@8r@o8o1$d'
 DEBUG = True
-ALLOWED_HOSTS = ["*"]  # Acepta conexiones locales (útil en desarrollo)
+ALLOWED_HOSTS = ["*"]
 
 # ==========================
 # ⚙️ APLICACIONES INSTALADAS
@@ -20,10 +21,13 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    # --- Apps externas ---
+    
+    # Apps externas
     'rest_framework',
+    'rest_framework_simplejwt',
     'corsheaders',
-    # --- Apps locales ---
+
+    # Apps locales
     'usuarios',
     'clientes',
     'citas',
@@ -53,7 +57,7 @@ ROOT_URLCONF = 'tallerya_backend.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / 'templates'],  # 🔹 útil si después querés usar plantillas personalizadas
+        'DIRS': [BASE_DIR / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -72,7 +76,7 @@ WSGI_APPLICATION = 'tallerya_backend.wsgi.application'
 # ==========================
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',  # ⚙️ Simple y portable
+        'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
@@ -91,7 +95,7 @@ AUTH_PASSWORD_VALIDATORS = [
 # 🌍 INTERNACIONALIZACIÓN
 # ==========================
 LANGUAGE_CODE = 'es'
-TIME_ZONE = 'America/Asuncion'  # 🇵🇾 Correcto para Paraguay
+TIME_ZONE = 'America/Asuncion'
 USE_I18N = True
 USE_TZ = True
 
@@ -99,12 +103,11 @@ USE_TZ = True
 # 🖼️ ARCHIVOS ESTÁTICOS
 # ==========================
 STATIC_URL = 'static/'
-STATICFILES_DIRS = [BASE_DIR / 'static']
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # ==========================
-# 🔗 CORS Y API REST
+# 🔗 CORS Y COOKIES
 # ==========================
 CORS_ALLOW_ALL_ORIGINS = False
 CORS_ALLOW_CREDENTIALS = True
@@ -116,26 +119,36 @@ CORS_ALLOWED_ORIGINS = [
     "http://127.0.0.1:5173",
 ]
 
-CSRF_TRUSTED_ORIGINS = [
-    "http://localhost:3000",
-    "http://localhost:5173",
-    "http://127.0.0.1:3000",
-    "http://127.0.0.1:5173",
-]
+CSRF_TRUSTED_ORIGINS = CORS_ALLOWED_ORIGINS
 
-# Cookies de sesión/CSRF para que el frontend pueda enviarlas correctamente
 SESSION_COOKIE_SAMESITE = 'Lax'
 SESSION_COOKIE_SECURE = False
 CSRF_COOKIE_SAMESITE = 'Lax'
 CSRF_COOKIE_SECURE = False
 
+# ==========================
+# ⚙️ DJANGO REST FRAMEWORK
+# ==========================
 REST_FRAMEWORK = {
-    'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework.authentication.SessionAuthentication',
-    ],
-    'DEFAULT_PERMISSION_CLASSES': [
+    # Usamos JWT como autenticación por defecto
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ),
+
+    # ❗Muy importante: por defecto NO pedimos autenticación
+    'DEFAULT_PERMISSION_CLASSES': (
         'rest_framework.permissions.AllowAny',
-    ],
+    ),
+}
+
+# ==========================
+# 🔥 JWT CONFIG
+# ==========================
+SIMPLE_JWT = {
+    "ACCESS_TOKEN_LIFETIME": timedelta(hours=12),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=3),
+    "ROTATE_REFRESH_TOKENS": False,
+    "AUTH_HEADER_TYPES": ("Bearer",),
 }
 
 # ==========================
@@ -151,13 +164,10 @@ JAZZMIN_SETTINGS = {
     "site_header": "TallerYa 🛠️",
     "site_brand": "TallerYa",
     "welcome_sign": "Bienvenido al Panel Administrativo de TallerYa",
-    "copyright": "© 2025 TallerYa - Sistema de Gestión de Talleres",
 
-    # Colores / Temas
     "theme": "lux",
     "dark_mode_theme": "cyborg",
 
-    # Íconos personalizados
     "icons": {
         "usuarios.Usuario": "fas fa-user-tie",
         "clientes.Cliente": "fas fa-user-tag",
@@ -167,26 +177,12 @@ JAZZMIN_SETTINGS = {
         "citas.Cita": "fas fa-calendar-check",
     },
 
-    # Sidebar / Navegación
     "show_sidebar": True,
     "navigation_expanded": True,
-    "search_model": "clientes.Cliente",
-
-    # Enlaces rápidos
-    "custom_links": {
-        "clientes": [{
-            "name": "Ver Panel Frontend",
-            "url": "http://localhost:3000/dashboard",
-            "icon": "fas fa-home",
-            "permissions": ["auth.view_user"]
-        }],
-    },
 }
 
-# Tweaks visuales adicionales
 JAZZMIN_UI_TWEAKS = {
     "navbar": "navbar-dark bg-primary",
     "sidebar": "sidebar-dark-primary",
     "theme": "darkly",
-    "dark_mode_theme": "cyborg",
 }

@@ -2,13 +2,17 @@ import axios from "axios";
 
 const api = axios.create({
   baseURL: "http://127.0.0.1:8000/api/",
-  withCredentials: true,
-  xsrfCookieName: "csrftoken",
-  xsrfHeaderName: "X-CSRFToken",
 });
 
-// Aseguramos que TODAS las solicitudes usen cookies de sesión
-axios.defaults.withCredentials = true;
+// 🔥 Interceptor: añade el token JWT automáticamente
+api.interceptors.request.use((config) => {
+  const token = localStorage.getItem("token");
 
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+
+  return config;
+});
 
 export default api;

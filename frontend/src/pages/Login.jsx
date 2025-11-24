@@ -15,14 +15,23 @@ function Login() {
         username,
         password,
       });
+
       const user = res.data.user;
+
+      // 👉 Guardamos el token JWT
+      if (res.data.access) {
+        localStorage.setItem("token", res.data.access);
+      }
+
+      // 👉 Guardamos los datos del usuario
       localStorage.setItem("user", JSON.stringify(user));
 
-      // Redirecciones según rol
+      // 👉 Redirección según rol
       if (user.rol === "JEFE") navigate("/personal");
       else if (user.rol === "MECANICO") navigate("/mecanico");
       else if (user.rol === "CLIENTE") navigate("/cliente");
       else navigate("/dashboard");
+
     } catch (err) {
       setMensaje("❌ Credenciales inválidas o error de conexión");
     }

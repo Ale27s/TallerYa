@@ -13,7 +13,7 @@ class VehiculoSerializer(serializers.ModelSerializer):
     # ID del propietario para crear/editar (solo para admin/empleado)
     propietario_id = serializers.PrimaryKeyRelatedField(
         source='propietario',
-        queryset=Usuario.objects.all(),
+        queryset=Usuario.objects.filter(rol="CLIENTE"),
         write_only=True,
         required=False
     )

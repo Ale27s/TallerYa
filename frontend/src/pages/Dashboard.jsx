@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import axios from "axios";
+import api from "../services/api";
 import { useNavigate } from "react-router-dom";
 import {
   BarChart,
@@ -26,11 +26,8 @@ function Dashboard() {
   });
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    const headers = token ? { Authorization: `Bearer ${token}` } : {};
-
-    axios
-      .get("http://127.0.0.1:8000/api/auth/estadisticas/", { headers })
+    api
+      .get("auth/estadisticas/")
       .then((res) => setStats(res.data))
       .catch(() => console.log("Error al obtener estadísticas"));
   }, []);

@@ -46,6 +46,28 @@ class VehiculoListCreateView(generics.ListCreateAPIView):
             serializer.save()
 
 
+class VehiculoRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
+    permission_classes = [IsAuthenticated]
+    serializer_class = VehiculoSerializer
+
+    def get_queryset(self):
+        queryset = Vehiculo.objects.all().order_by('-ingreso')
+        user = self.request.user
+
+        if user.is_authenticated and getattr(user, 'rol', None) == 'CLIENTE':
+            return queryset.filter(propietario=user)
+
+        return queryset
+
+    def perform_update(self, serializer):
+        user = self.request.user
+
+        if getattr(user, 'rol', None) == 'CLIENTE':
+            serializer.save(propietario=user)
+        else:
+            serializer.save()
+
+
 def vehiculo_pdf(request, pk):
     """Genera un reporte PDF con los datos del vehículo"""
     vehiculo = Vehiculo.objects.get(pk=pk)

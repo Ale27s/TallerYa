@@ -39,4 +39,4 @@ class VehiculoSerializer(serializers.ModelSerializer):
             'entrega_estimada',
             'dias_mora',
         ]
-        read_only_fields = ['estado', 'ingreso', 'entrega_estimada']
+        read_only_fields = ['ingreso', 'propietario_nombre', 'dias_mora']

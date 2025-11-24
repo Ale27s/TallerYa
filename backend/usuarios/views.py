@@ -5,6 +5,14 @@ from django.contrib.auth import authenticate
 from .models import Usuario
 from .serializers import UsuarioSerializer
 from rest_framework_simplejwt.tokens import RefreshToken
+from django.utils import timezone
+from datetime import timedelta
+from decimal import Decimal
+from django.db.models import Sum
+from clientes.models import Cliente
+from citas.models import Cita
+from vehiculos.models import Vehiculo
+from facturacion.models import Factura
 
 # Permisos por rol
 from usuarios.permissions import RolRequerido
@@ -110,6 +118,52 @@ class LogoutView(views.APIView):
 
     def post(self, request):
         return Response({"message": "Sesión cerrada"})
+
+
+# ====================================================
+# 📊 ESTADÍSTICAS DEL DASHBOARD
+# ====================================================
+class EstadisticasDashboardView(views.APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        hoy = timezone.localdate()
+        inicio_semana = hoy - timedelta(days=hoy.weekday())
+        inicio_mes = hoy.replace(day=1)
+        inicio_anio = hoy.replace(month=1, day=1)
+
+        facturas_pagadas = Factura.objects.filter(estado="PAGADO")
+
+        def _sumar_ingresos(desde):
+            return facturas_pagadas.filter(fecha__date__gte=desde).aggregate(
+                total=Sum("total")
+            )["total"] or Decimal("0")
+
+        pagos_recientes = [
+            {
+                "id": factura.id,
+                "cliente": getattr(factura.cliente, "username", "Cliente"),
+                "metodo_pago": factura.metodo_pago,
+                "total": float(factura.total),
+                "fecha": factura.fecha.isoformat(),
+            }
+            for factura in facturas_pagadas.select_related("cliente").order_by("-fecha")[:5]
+        ]
+
+        data = {
+            "clientes": Cliente.objects.count(),
+            "mecanicos": Usuario.objects.filter(rol="MECANICO").count(),
+            "citasHoy": Cita.objects.filter(fecha=hoy).count(),
+            "vehiculos": Vehiculo.objects.count(),
+            "ingresos": {
+                "semana": float(_sumar_ingresos(inicio_semana)),
+                "mes": float(_sumar_ingresos(inicio_mes)),
+                "anio": float(_sumar_ingresos(inicio_anio)),
+            },
+            "pagos": pagos_recientes,
+        }
+
+        return Response(data)
 
 
 # ====================================================

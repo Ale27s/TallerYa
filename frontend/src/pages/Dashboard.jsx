@@ -21,11 +21,16 @@ function Dashboard() {
     mecanicos: 0,
     citasHoy: 0,
     vehiculos: 0,
+    ingresos: { semana: 0, mes: 0, anio: 0 },
+    pagos: [],
   });
 
   useEffect(() => {
+    const token = localStorage.getItem("token");
+    const headers = token ? { Authorization: `Bearer ${token}` } : {};
+
     axios
-      .get("http://127.0.0.1:8000/api/auth/estadisticas/")
+      .get("http://127.0.0.1:8000/api/auth/estadisticas/", { headers })
       .then((res) => setStats(res.data))
       .catch(() => console.log("Error al obtener estadísticas"));
   }, []);
@@ -42,6 +47,24 @@ function Dashboard() {
     { name: "Citas de hoy", cantidad: stats.citasHoy },
     { name: "Vehículos", cantidad: stats.vehiculos },
   ];
+
+  const ingresos = stats.ingresos || {};
+
+  const formatCurrency = (valor) =>
+    new Intl.NumberFormat("es-PY", {
+      style: "currency",
+      currency: "PYG",
+      minimumFractionDigits: 0,
+    }).format(valor || 0);
+
+  const formatDate = (dateString) =>
+    new Date(dateString).toLocaleDateString("es-ES", {
+      day: "2-digit",
+      month: "short",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
 
   // 🔹 Colores dinámicos según valor
   const getBarColor = (valor) => {
@@ -112,6 +135,48 @@ function Dashboard() {
           </div>
         </div>
 
+        {/* 🔹 Ingresos de la semana/mes/año */}
+        <div className="row g-3 mt-3">
+          <div className="col-md-4">
+            <div className="card stat-card shadow border-0">
+              <div className="card-body">
+                <div className="d-flex align-items-center mb-2">
+                  <i className="bi bi-cash-stack fs-3 text-success me-2"></i>
+                  <h6 className="mb-0">Ingresos de la semana</h6>
+                </div>
+                <p className="text-muted mb-1">Semana en curso</p>
+                <h4 className="fw-bold mb-0">{formatCurrency(ingresos.semana)}</h4>
+              </div>
+            </div>
+          </div>
+
+          <div className="col-md-4">
+            <div className="card stat-card shadow border-0">
+              <div className="card-body">
+                <div className="d-flex align-items-center mb-2">
+                  <i className="bi bi-calendar-event fs-3 text-info me-2"></i>
+                  <h6 className="mb-0">Ingresos del mes</h6>
+                </div>
+                <p className="text-muted mb-1">Acumulado mensual</p>
+                <h4 className="fw-bold mb-0">{formatCurrency(ingresos.mes)}</h4>
+              </div>
+            </div>
+          </div>
+
+          <div className="col-md-4">
+            <div className="card stat-card shadow border-0">
+              <div className="card-body">
+                <div className="d-flex align-items-center mb-2">
+                  <i className="bi bi-calendar-check fs-3 text-danger me-2"></i>
+                  <h6 className="mb-0">Ingresos del año</h6>
+                </div>
+                <p className="text-muted mb-1">Total anual</p>
+                <h4 className="fw-bold mb-0">{formatCurrency(ingresos.anio)}</h4>
+              </div>
+            </div>
+          </div>
+        </div>
+
         {/* 🔹 Resumen general */}
         <div className="mt-5">
           <h4 className="fw-bold text-danger mb-3">
@@ -123,6 +188,49 @@ function Dashboard() {
               control de clientes, gestión de personal, citas y vehículos.
               Este panel muestra el desempeño general del taller en tiempo real.
             </p>
+          </div>
+        </div>
+
+        {/* 🔹 Pagos recientes */}
+        <div className="mt-5">
+          <h4 className="fw-bold text-danger mb-3">
+            <i className="bi bi-credit-card-2-front me-2"></i>Pagos registrados
+          </h4>
+          <div className="card shadow-sm border-0">
+            <div className="table-responsive">
+              <table className="table align-middle mb-0">
+                <thead className="table-light">
+                  <tr>
+                    <th>Cliente</th>
+                    <th>Método de pago</th>
+                    <th className="text-end">Total</th>
+                    <th className="text-end">Fecha</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {stats.pagos?.length ? (
+                    stats.pagos.map((pago) => (
+                      <tr key={pago.id}>
+                        <td className="fw-semibold">{pago.cliente}</td>
+                        <td>
+                          <span className="badge text-bg-secondary">
+                            {pago.metodo_pago.replace("_", " ")}
+                          </span>
+                        </td>
+                        <td className="text-end fw-bold">{formatCurrency(pago.total)}</td>
+                        <td className="text-end text-muted">{formatDate(pago.fecha)}</td>
+                      </tr>
+                    ))
+                  ) : (
+                    <tr>
+                      <td colSpan="4" className="text-center text-muted py-4">
+                        Aún no hay pagos registrados.
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
 

@@ -7,6 +7,15 @@ class Factura(models.Model):
     fecha = models.DateTimeField(auto_now_add=True)
     total = models.DecimalField(max_digits=12, decimal_places=2)
     estado = models.CharField(max_length=20, choices=[('PAGADO', 'Pagado'), ('PENDIENTE', 'Pendiente')], default='PENDIENTE')
+    metodo_pago = models.CharField(
+        max_length=20,
+        choices=[
+            ("EFECTIVO", "Efectivo"),
+            ("TARJETA", "Tarjeta"),
+            ("TRANSFERENCIA", "Transferencia"),
+        ],
+        default="EFECTIVO",
+    )
 
     def __str__(self):
         return f"Factura #{self.id} - {self.cliente.username}"

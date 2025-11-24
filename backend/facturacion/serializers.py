@@ -18,4 +18,15 @@ class FacturaSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Factura
-        fields = ['id', 'cliente', 'cliente_nombre', 'mecanico', 'mecanico_nombre', 'fecha', 'total', 'estado', 'detalles']
+        fields = [
+            'id',
+            'cliente',
+            'cliente_nombre',
+            'mecanico',
+            'mecanico_nombre',
+            'fecha',
+            'total',
+            'estado',
+            'metodo_pago',
+            'detalles'
+        ]

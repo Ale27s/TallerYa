@@ -63,10 +63,19 @@ class LoginView(views.APIView):
     permission_classes = [AllowAny]
 
     def post(self, request):
-        username = request.data.get("username")
+        # 🔎 Permitimos ingresar con nombre de usuario **o** correo electrónico
+        identificador = request.data.get("username") or request.data.get("email")
         password = request.data.get("password")
 
-        print("DEBUG LOGIN:", username, password)  # ← Log importante
+        if not identificador or not password:
+            return Response({"message": "Faltan credenciales"}, status=400)
+
+        # Si el usuario escribe un correo, buscamos el username asociado
+        username = identificador
+        if "@" in identificador:
+            usuario = Usuario.objects.filter(email=identificador).first()
+            if usuario:
+                username = usuario.username
 
         user = authenticate(username=username, password=password)
 

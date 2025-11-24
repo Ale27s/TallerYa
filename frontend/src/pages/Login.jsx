@@ -56,7 +56,8 @@ function Login() {
         <form onSubmit={handleLogin}>
           <div className="mb-3 text-start">
             <label className="form-label fw-bold">
-              <i className="bi bi-person-fill text-danger me-2"></i>Usuario
+              <i className="bi bi-person-fill text-danger me-2"></i>
+              Usuario o correo
             </label>
             <input
               className="form-control"

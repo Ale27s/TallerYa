@@ -79,15 +79,19 @@ class LoginView(views.APIView):
         if "@" in identificador:
             usuario = Usuario.objects.filter(email=identificador).first()
             if not usuario:
-                return Response({"message": "Correo no encontrado"}, status=401)
-            username = usuario.username
+                return Response({"message": "Correo no encontrado", "field": "identificador"}, status=401)
         else:
-            username = identificador
+            usuario = Usuario.objects.filter(username=identificador).first()
+            if not usuario:
+                return Response({"message": "Usuario no encontrado", "field": "identificador"}, status=401)
 
-        user = authenticate(username=username, password=password)
+        if not usuario.check_password(password):
+            return Response({"message": "Contraseña incorrecta", "field": "password"}, status=401)
+
+        user = authenticate(username=usuario.username, password=password)
 
         if user is None:
-            return Response({"message": "Credenciales inválidas"}, status=401)
+            return Response({"message": "Credenciales inválidas", "field": "password"}, status=401)
 
         refresh = RefreshToken.for_user(user)
 

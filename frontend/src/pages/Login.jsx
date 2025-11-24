@@ -6,6 +6,7 @@ function Login() {
   const [identificador, setIdentificador] = useState("");
   const [password, setPassword] = useState("");
   const [mensaje, setMensaje] = useState("");
+  const [errores, setErrores] = useState({ identificador: "", password: "" });
   const [mostrarPassword, setMostrarPassword] = useState(false);
   const navigate = useNavigate();
 
@@ -27,6 +28,10 @@ function Login() {
       // 👉 Guardamos los datos del usuario
       localStorage.setItem("user", JSON.stringify(user));
 
+      // 👉 Reiniciamos estados de error
+      setMensaje("");
+      setErrores({ identificador: "", password: "" });
+
       // 👉 Redirección según rol
       if (user.rol === "JEFE") navigate("/personal");
       else if (user.rol === "MECANICO") navigate("/mecanico");
@@ -35,7 +40,12 @@ function Login() {
 
     } catch (err) {
       const errorMsg = err?.response?.data?.message;
+      const campoError = err?.response?.data?.field;
       setMensaje(errorMsg || "❌ Credenciales inválidas o error de conexión");
+      setErrores({
+        identificador: campoError === "identificador" ? (errorMsg || "Revisá el usuario o correo") : "",
+        password: campoError === "password" ? (errorMsg || "Revisá la contraseña") : "",
+      });
     }
   };
 
@@ -62,12 +72,17 @@ function Login() {
               Usuario o correo
             </label>
             <input
-              className="form-control"
+              className={`form-control ${errores.identificador ? "is-invalid" : ""}`}
               placeholder="Ej: admin_taller"
               value={identificador}
               onChange={(e) => setIdentificador(e.target.value)}
               required
             />
+            {errores.identificador && (
+              <div className="invalid-feedback d-block">
+                👉 {errores.identificador}
+              </div>
+            )}
           </div>
 
           <div className="mb-3 text-start">
@@ -77,7 +92,7 @@ function Login() {
             <div className="input-group">
               <input
                 type={mostrarPassword ? "text" : "password"}
-                className="form-control"
+                className={`form-control ${errores.password ? "is-invalid" : ""}`}
                 placeholder="••••••••"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
@@ -92,6 +107,11 @@ function Login() {
                 <i className={`bi ${mostrarPassword ? "bi-eye-slash" : "bi-eye"}`}></i>
               </button>
             </div>
+            {errores.password && (
+              <div className="invalid-feedback d-block">
+                👉 {errores.password}
+              </div>
+            )}
           </div>
 
           <button className="btn btn-danger w-100 mt-2">

@@ -3,16 +3,17 @@ import api from "../services/api";
 import { useNavigate } from "react-router-dom";
 
 function Login() {
-  const [username, setUsername] = useState("");
+  const [identificador, setIdentificador] = useState("");
   const [password, setPassword] = useState("");
   const [mensaje, setMensaje] = useState("");
+  const [mostrarPassword, setMostrarPassword] = useState(false);
   const navigate = useNavigate();
 
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
       const res = await api.post("auth/login/", {
-        username,
+        identificador,
         password,
       });
 
@@ -33,7 +34,8 @@ function Login() {
       else navigate("/dashboard");
 
     } catch (err) {
-      setMensaje("❌ Credenciales inválidas o error de conexión");
+      const errorMsg = err?.response?.data?.message;
+      setMensaje(errorMsg || "❌ Credenciales inválidas o error de conexión");
     }
   };
 
@@ -62,8 +64,8 @@ function Login() {
             <input
               className="form-control"
               placeholder="Ej: admin_taller"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
+              value={identificador}
+              onChange={(e) => setIdentificador(e.target.value)}
               required
             />
           </div>
@@ -72,14 +74,24 @@ function Login() {
             <label className="form-label fw-bold">
               <i className="bi bi-lock-fill text-danger me-2"></i>Contraseña
             </label>
-            <input
-              type="password"
-              className="form-control"
-              placeholder="••••••••"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-            />
+            <div className="input-group">
+              <input
+                type={mostrarPassword ? "text" : "password"}
+                className="form-control"
+                placeholder="••••••••"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+              />
+              <button
+                type="button"
+                className="btn btn-outline-secondary"
+                onClick={() => setMostrarPassword((prev) => !prev)}
+                aria-label={mostrarPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
+              >
+                <i className={`bi ${mostrarPassword ? "bi-eye-slash" : "bi-eye"}`}></i>
+              </button>
+            </div>
           </div>
 
           <button className="btn btn-danger w-100 mt-2">

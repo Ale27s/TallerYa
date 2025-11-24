@@ -75,23 +75,23 @@ class LoginView(views.APIView):
         if not identificador or not password:
             return Response({"message": "Faltan credenciales"}, status=400)
 
-        # Detectar si es correo
+        # Buscar por username o email
         if "@" in identificador:
             usuario = Usuario.objects.filter(email=identificador).first()
-            if not usuario:
-                return Response({"message": "Correo no encontrado", "field": "identificador"}, status=401)
         else:
             usuario = Usuario.objects.filter(username=identificador).first()
-            if not usuario:
-                return Response({"message": "Usuario no encontrado", "field": "identificador"}, status=401)
+
+        if not usuario:
+            return Response({"message": "Usuario/correo no existe", "field": "identificador"}, status=401)
 
         if not usuario.check_password(password):
             return Response({"message": "Contraseña incorrecta", "field": "password"}, status=401)
 
+        # Autenticar con username real
         user = authenticate(username=usuario.username, password=password)
 
         if user is None:
-            return Response({"message": "Credenciales inválidas", "field": "password"}, status=401)
+            return Response({"message": "Error interno de autenticación"}, status=401)
 
         refresh = RefreshToken.for_user(user)
 

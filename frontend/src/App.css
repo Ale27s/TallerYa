@@ -197,6 +197,93 @@ html, body {
   overflow-x: hidden;
 }
 
+/* ============================================================
+   🛡️  MODAL DE CONFIRMACIÓN PERSONALIZADO
+   ============================================================ */
+.confirm-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.65);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1080;
+  backdrop-filter: blur(2px);
+}
+
+.confirm-card {
+  background: linear-gradient(135deg, #1b1b1b, #2a2a2a);
+  color: #f8f9fa;
+  border: 1px solid #c70000;
+  border-radius: 18px;
+  padding: 24px;
+  width: min(420px, 90vw);
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.35);
+  text-align: center;
+  animation: zoomIn 0.25s ease;
+}
+
+[data-bs-theme="light"] .confirm-card {
+  background: linear-gradient(135deg, #ffffff, #f6f6f6);
+  color: #111;
+  border-color: #b30000;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
+}
+
+.confirm-card .btn {
+  min-width: 120px;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+}
+
+.confirm-card .btn-danger {
+  box-shadow: 0 8px 18px rgba(199, 0, 0, 0.35);
+}
+
+.confirm-card .btn-outline-light {
+  border-color: rgba(255, 255, 255, 0.6);
+  color: #fff;
+}
+
+[data-bs-theme="light"] .confirm-card .btn-outline-light {
+  border-color: #c70000;
+  color: #c70000;
+  background: rgba(199, 0, 0, 0.08);
+}
+
+.confirm-card h5 {
+  margin: 0 0 6px;
+  font-weight: 700;
+  letter-spacing: 0.2px;
+}
+
+.confirm-card p {
+  margin: 0 0 16px;
+  color: rgba(248, 249, 250, 0.85);
+}
+
+[data-bs-theme="light"] .confirm-card p {
+  color: rgba(0, 0, 0, 0.7);
+}
+
+.confirm-icon {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: rgba(199, 0, 0, 0.12);
+  border: 1px solid rgba(199, 0, 0, 0.4);
+  color: #ff5f5f;
+  display: grid;
+  place-items: center;
+  font-size: 26px;
+  margin: 0 auto 14px;
+}
+
+[data-bs-theme="light"] .confirm-icon {
+  background: rgba(199, 0, 0, 0.08);
+  color: #c70000;
+}
+
 /* Contenedor interno centrado */
 .page-container-centered {
   width: 100%;

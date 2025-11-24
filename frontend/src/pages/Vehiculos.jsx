@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { Modal } from "bootstrap";
+import api from "../services/api";
 
 function Vehiculos() {
   const [vehiculos, setVehiculos] = useState([]);
@@ -20,8 +20,8 @@ function Vehiculos() {
 
   // 🔹 Cargar vehículos desde el backend
   const cargarVehiculos = () => {
-    axios
-      .get("http://127.0.0.1:8000/api/vehiculos/listar/", { withCredentials: true })
+    api
+      .get("/vehiculos/listar/")
       .then((res) => setVehiculos(res.data))
       .catch(() => console.log("Error al cargar vehículos"));
   };
@@ -43,7 +43,7 @@ function Vehiculos() {
         payload.propietario_id = Number(payload.propietario_id);
       }
 
-      await axios.post("http://127.0.0.1:8000/api/vehiculos/listar/", payload, { withCredentials: true });
+      await api.post("/vehiculos/listar/", payload);
 
       setNuevoVehiculo({ marca: "", modelo: "", anio: "", placa: "", propietario_id: "" });
       cargarVehiculos();

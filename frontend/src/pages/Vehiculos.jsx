@@ -8,7 +8,10 @@ function Vehiculos() {
   const [filtroEstado, setFiltroEstado] = useState("TODOS");
   const [busqueda, setBusqueda] = useState("");
   const [vehiculoSeleccionado, setVehiculoSeleccionado] = useState(null);
-  const [user, setUser] = useState(() => JSON.parse(localStorage.getItem("user")));
+  const [user, setUser] = useState(() =>
+    JSON.parse(localStorage.getItem("user"))
+  );
+
   const [nuevoVehiculo, setNuevoVehiculo] = useState({
     marca: "",
     modelo: "",
@@ -16,16 +19,19 @@ function Vehiculos() {
     placa: "",
     propietario_id: "",
   });
+
   const isCliente = user?.rol === "CLIENTE";
 
-  // ================================================
-  // 🔹 Cargar vehículos desde el backend (GET /vehiculos/)
-  // ================================================
+  // ===============================
+  // Cargar vehículos
+  // ===============================
   const cargarVehiculos = () => {
     api
       .get("/vehiculos/")
       .then((res) => setVehiculos(res.data))
-      .catch(() => console.log("Error al cargar vehículos"));
+      .catch((err) => {
+        console.error("Error al cargar vehículos", err);
+      });
   };
 
   useEffect(() => {
@@ -34,9 +40,9 @@ function Vehiculos() {
     cargarVehiculos();
   }, []);
 
-  // ================================================
-  // 🔹 Crear vehículo (POST /vehiculos/)
-  // ================================================
+  // ===============================
+  // Crear vehículo
+  // ===============================
   const handleCrearVehiculo = async (e) => {
     e.preventDefault();
 
@@ -46,19 +52,22 @@ function Vehiculos() {
         anio: Number(nuevoVehiculo.anio),
       };
 
-      // Validación obligatoria para quienes NO son cliente
+      // Si no es cliente, el propietario_id es obligatorio
       if (!isCliente && !payload.propietario_id) {
         alert("Debes ingresar el ID del propietario.");
         return;
       }
 
-      if (payload.propietario_id) {
+      // Si viene vacío, lo sacamos del payload (para clientes)
+      if (!payload.propietario_id) {
+        delete payload.propietario_id;
+      } else {
         payload.propietario_id = Number(payload.propietario_id);
       }
 
       await api.post("/vehiculos/", payload);
 
-      // Reset
+      // Reset form
       setNuevoVehiculo({
         marca: "",
         modelo: "",
@@ -69,6 +78,7 @@ function Vehiculos() {
 
       cargarVehiculos();
 
+      // Cerrar modal
       const modalElement = document.getElementById("crearVehiculoModal");
       if (modalElement) {
         const modal =
@@ -78,12 +88,13 @@ function Vehiculos() {
       }
     } catch (error) {
       console.error("No se pudo registrar el vehículo", error);
+      alert("Ocurrió un error al registrar el vehículo.");
     }
   };
 
-  // ================================================
-  // 🔹 Filtros + búsqueda
-  // ================================================
+  // ===============================
+  // Filtros + búsqueda
+  // ===============================
   const vehiculosFiltrados = vehiculos.filter((v) => {
     const palabra = busqueda.toLowerCase();
 
@@ -109,10 +120,7 @@ function Vehiculos() {
   return (
     <div className="content-wrapper-full">
       <div className="page-container-centered">
-
-        {/* ============================================ */}
-        {/* TÍTULO */}
-        {/* ============================================ */}
+        {/* Título */}
         <h2 className="page-title">
           <i className="bi bi-car-front-fill me-2"></i>
           Gestión de Vehículos
@@ -122,9 +130,7 @@ function Vehiculos() {
           Monitoreá el estado, tiempos y servicios de cada vehículo registrado.
         </p>
 
-        {/* ============================================ */}
-        {/* FILTROS */}
-        {/* ============================================ */}
+        {/* Filtros */}
         <div className="card p-3 shadow-sm border-0 mb-4">
           <div className="row g-3 align-items-center">
             <div className="col-md-5">
@@ -146,7 +152,8 @@ function Vehiculos() {
                 <option value="TODOS">Todos los estados</option>
                 <option value="EN_TALLER">En taller</option>
                 <option value="FINALIZADO">Finalizado</option>
-                <option value="PENDIENTE">Pendiente</option>
+                <option value="EN_SERVICIO">En servicio</option>
+                <option value="MORA">En mora</option>
               </select>
             </div>
 
@@ -155,7 +162,8 @@ function Vehiculos() {
                 className="btn btn-danger d-flex align-items-center gap-2"
                 type="button"
                 onClick={() => {
-                  const modalElement = document.getElementById("crearVehiculoModal");
+                  const modalElement =
+                    document.getElementById("crearVehiculoModal");
                   const modal = Modal.getOrCreateInstance(modalElement);
                   modal.show();
                 }}
@@ -170,9 +178,7 @@ function Vehiculos() {
           </div>
         </div>
 
-        {/* ============================================ */}
-        {/* FORMULARIO "MI VEHÍCULO" SI ES CLIENTE */}
-        {/* ============================================ */}
+        {/* Formulario rápido para clientes */}
         {isCliente && (
           <div className="card p-3 shadow-sm border-0 mb-4">
             <h5 className="text-danger fw-bold mb-3">
@@ -184,7 +190,12 @@ function Vehiculos() {
                   className="form-control"
                   placeholder="Marca"
                   value={nuevoVehiculo.marca}
-                  onChange={(e) => setNuevoVehiculo({ ...nuevoVehiculo, marca: e.target.value })}
+                  onChange={(e) =>
+                    setNuevoVehiculo({
+                      ...nuevoVehiculo,
+                      marca: e.target.value,
+                    })
+                  }
                   required
                 />
               </div>
@@ -193,7 +204,12 @@ function Vehiculos() {
                   className="form-control"
                   placeholder="Modelo"
                   value={nuevoVehiculo.modelo}
-                  onChange={(e) => setNuevoVehiculo({ ...nuevoVehiculo, modelo: e.target.value })}
+                  onChange={(e) =>
+                    setNuevoVehiculo({
+                      ...nuevoVehiculo,
+                      modelo: e.target.value,
+                    })
+                  }
                   required
                 />
               </div>
@@ -205,7 +221,12 @@ function Vehiculos() {
                   max={new Date().getFullYear() + 1}
                   placeholder="Año"
                   value={nuevoVehiculo.anio}
-                  onChange={(e) => setNuevoVehiculo({ ...nuevoVehiculo, anio: e.target.value })}
+                  onChange={(e) =>
+                    setNuevoVehiculo({
+                      ...nuevoVehiculo,
+                      anio: e.target.value,
+                    })
+                  }
                   required
                 />
               </div>
@@ -214,7 +235,12 @@ function Vehiculos() {
                   className="form-control"
                   placeholder="Placa"
                   value={nuevoVehiculo.placa}
-                  onChange={(e) => setNuevoVehiculo({ ...nuevoVehiculo, placa: e.target.value })}
+                  onChange={(e) =>
+                    setNuevoVehiculo({
+                      ...nuevoVehiculo,
+                      placa: e.target.value,
+                    })
+                  }
                   required
                 />
               </div>
@@ -227,9 +253,7 @@ function Vehiculos() {
           </div>
         )}
 
-        {/* ============================================ */}
-        {/* TABLA */}
-        {/* ============================================ */}
+        {/* Tabla */}
         <div className="card p-3 shadow-sm border-0">
           {vehiculosFiltrados.length === 0 ? (
             <p className="text-muted text-center mt-3">
@@ -251,7 +275,6 @@ function Vehiculos() {
                     <th>Acciones</th>
                   </tr>
                 </thead>
-
                 <tbody>
                   {vehiculosFiltrados.map((v) => (
                     <tr key={v.id}>
@@ -261,7 +284,6 @@ function Vehiculos() {
                       <td>{v.modelo}</td>
                       <td>{v.anio}</td>
                       <td>{v.placa}</td>
-
                       <td>
                         <span
                           className={`badge rounded-pill ${
@@ -277,9 +299,7 @@ function Vehiculos() {
                           {v.estado}
                         </span>
                       </td>
-
                       <td>{v.dias_mora || 0} días</td>
-
                       <td>
                         <button
                           className="btn btn-outline-dark btn-sm"
@@ -295,12 +315,9 @@ function Vehiculos() {
             </div>
           )}
         </div>
-
       </div>
 
-      {/* ============================================ */}
-      {/* MODAL CREAR VEHÍCULO */}
-      {/* ============================================ */}
+      {/* Modal crear vehículo */}
       <div
         className="modal fade"
         id="crearVehiculoModal"
@@ -326,19 +343,24 @@ function Vehiculos() {
               <div className="modal-body">
                 {!isCliente && (
                   <div className="mb-3">
-                    <label className="form-label fw-bold">ID del propietario</label>
+                    <label className="form-label fw-bold">
+                      ID del propietario
+                    </label>
                     <input
                       type="number"
                       className="form-control"
-                      placeholder="Ej: 12"
+                      placeholder="Ej: 1"
                       value={nuevoVehiculo.propietario_id}
                       onChange={(e) =>
-                        setNuevoVehiculo({ ...nuevoVehiculo, propietario_id: e.target.value })
+                        setNuevoVehiculo({
+                          ...nuevoVehiculo,
+                          propietario_id: e.target.value,
+                        })
                       }
                       required
                     />
                     <small className="text-muted">
-                      El vehículo se registrará asociado a este cliente.
+                      El vehículo se registrará asociado a este usuario.
                     </small>
                   </div>
                 )}
@@ -350,7 +372,12 @@ function Vehiculos() {
                       className="form-control"
                       placeholder="Marca"
                       value={nuevoVehiculo.marca}
-                      onChange={(e) => setNuevoVehiculo({ ...nuevoVehiculo, marca: e.target.value })}
+                      onChange={(e) =>
+                        setNuevoVehiculo({
+                          ...nuevoVehiculo,
+                          marca: e.target.value,
+                        })
+                      }
                       required
                     />
                   </div>
@@ -360,7 +387,12 @@ function Vehiculos() {
                       className="form-control"
                       placeholder="Modelo"
                       value={nuevoVehiculo.modelo}
-                      onChange={(e) => setNuevoVehiculo({ ...nuevoVehiculo, modelo: e.target.value })}
+                      onChange={(e) =>
+                        setNuevoVehiculo({
+                          ...nuevoVehiculo,
+                          modelo: e.target.value,
+                        })
+                      }
                       required
                     />
                   </div>
@@ -373,7 +405,12 @@ function Vehiculos() {
                       max={new Date().getFullYear() + 1}
                       placeholder="Año"
                       value={nuevoVehiculo.anio}
-                      onChange={(e) => setNuevoVehiculo({ ...nuevoVehiculo, anio: e.target.value })}
+                      onChange={(e) =>
+                        setNuevoVehiculo({
+                          ...nuevoVehiculo,
+                          anio: e.target.value,
+                        })
+                      }
                       required
                     />
                   </div>
@@ -383,7 +420,12 @@ function Vehiculos() {
                       className="form-control"
                       placeholder="Placa"
                       value={nuevoVehiculo.placa}
-                      onChange={(e) => setNuevoVehiculo({ ...nuevoVehiculo, placa: e.target.value })}
+                      onChange={(e) =>
+                        setNuevoVehiculo({
+                          ...nuevoVehiculo,
+                          placa: e.target.value,
+                        })
+                      }
                       required
                     />
                   </div>
@@ -391,7 +433,11 @@ function Vehiculos() {
               </div>
 
               <div className="modal-footer">
-                <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">
+                <button
+                  type="button"
+                  className="btn btn-secondary"
+                  data-bs-dismiss="modal"
+                >
                   Cancelar
                 </button>
                 <button type="submit" className="btn btn-danger">
@@ -404,9 +450,7 @@ function Vehiculos() {
         </div>
       </div>
 
-      {/* ============================================ */}
-      {/* MODAL DETALLE */}
-      {/* ============================================ */}
+      {/* Modal detalle */}
       <div
         className="modal fade"
         id="detalleModal"
@@ -420,7 +464,6 @@ function Vehiculos() {
                 <i className="bi bi-info-circle-fill me-2"></i>
                 Detalle del Vehículo
               </h5>
-
               <button
                 type="button"
                 className="btn-close btn-close-white"
@@ -432,14 +475,15 @@ function Vehiculos() {
               {vehiculoSeleccionado ? (
                 <>
                   <h5 className="fw-bold mb-2">
-                    🚗 {vehiculoSeleccionado.marca} {vehiculoSeleccionado.modelo}
+                    🚗 {vehiculoSeleccionado.marca}{" "}
+                    {vehiculoSeleccionado.modelo}{" "}
                     <span className="text-muted">
                       ({vehiculoSeleccionado.anio})
                     </span>
                   </h5>
-
                   <p>
-                    <strong>Propietario:</strong> {vehiculoSeleccionado.propietario_nombre || "—"}
+                    <strong>Propietario:</strong>{" "}
+                    {vehiculoSeleccionado.propietario_nombre || "—"}
                   </p>
                   <p>
                     <strong>Placa:</strong> {vehiculoSeleccionado.placa}
@@ -464,7 +508,6 @@ function Vehiculos() {
               >
                 Cerrar
               </button>
-
               <button
                 className="btn btn-success"
                 onClick={() =>
@@ -482,7 +525,6 @@ function Vehiculos() {
           </div>
         </div>
       </div>
-
     </div>
   );
 }

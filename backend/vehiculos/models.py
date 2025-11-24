@@ -14,7 +14,7 @@ class Vehiculo(models.Model):
         ('FINALIZADO', 'Finalizado'),
         ('MORA', 'En Mora'),
     ], default='EN_TALLER')
-    ingreso = models.DateField(default=timezone.now)
+    ingreso = models.DateField(default=timezone.localdate)
     entrega_estimada = models.DateField(null=True, blank=True)
 
     def dias_en_mora(self):

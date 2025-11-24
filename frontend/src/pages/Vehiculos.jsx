@@ -8,6 +8,7 @@ function Vehiculos() {
   const [filtroEstado, setFiltroEstado] = useState("TODOS");
   const [busqueda, setBusqueda] = useState("");
   const [vehiculoSeleccionado, setVehiculoSeleccionado] = useState(null);
+  const [vehiculoEditando, setVehiculoEditando] = useState(null);
   const [user, setUser] = useState(() =>
     JSON.parse(localStorage.getItem("user"))
   );
@@ -19,6 +20,13 @@ function Vehiculos() {
     placa: "",
     propietario_id: "",
   });
+
+  const ESTADOS_OPCIONES = [
+    { value: "EN_TALLER", label: "En taller" },
+    { value: "EN_SERVICIO", label: "Fuera del taller" },
+    { value: "FINALIZADO", label: "Finalizado" },
+    { value: "MORA", label: "En mora" },
+  ];
 
   const isCliente = user?.rol === "CLIENTE";
 
@@ -115,6 +123,88 @@ function Vehiculos() {
     const modalElement = document.getElementById("detalleModal");
     const modal = Modal.getOrCreateInstance(modalElement);
     modal.show();
+  };
+
+  const abrirModalEditar = (vehiculo) => {
+    setVehiculoEditando({
+      ...vehiculo,
+      propietario_id: "",
+    });
+
+    const modalElement = document.getElementById("editarVehiculoModal");
+    const modal = Modal.getOrCreateInstance(modalElement);
+    modal.show();
+  };
+
+  const handleActualizarVehiculo = async (e) => {
+    e.preventDefault();
+
+    if (!vehiculoEditando) return;
+
+    try {
+      const payload = {
+        marca: vehiculoEditando.marca,
+        modelo: vehiculoEditando.modelo,
+        anio: Number(vehiculoEditando.anio),
+        placa: vehiculoEditando.placa,
+        estado: vehiculoEditando.estado,
+      };
+
+      if (!isCliente) {
+        if (vehiculoEditando.propietario_id) {
+          payload.propietario_id = Number(vehiculoEditando.propietario_id);
+        }
+      }
+
+      await api.patch(`/vehiculos/${vehiculoEditando.id}/`, payload);
+      cargarVehiculos();
+
+      const modalElement = document.getElementById("editarVehiculoModal");
+      if (modalElement) {
+        const modal =
+          Modal.getInstance(modalElement) || Modal.getOrCreateInstance(modalElement);
+        modal.hide();
+      }
+
+      setVehiculoEditando(null);
+    } catch (error) {
+      console.error("No se pudo actualizar el vehículo", error);
+      alert("Ocurrió un error al actualizar el vehículo.");
+    }
+  };
+
+  const handleEliminarVehiculo = async (vehiculoId) => {
+    const confirmacion = window.confirm(
+      "¿Seguro que deseas eliminar este vehículo? Esta acción no se puede deshacer."
+    );
+
+    if (!confirmacion) return;
+
+    try {
+      await api.delete(`/vehiculos/${vehiculoId}/`);
+      cargarVehiculos();
+      setVehiculoSeleccionado((prev) =>
+        prev && prev.id === vehiculoId ? null : prev
+      );
+    } catch (error) {
+      console.error("No se pudo eliminar el vehículo", error);
+      alert("Ocurrió un error al eliminar el vehículo.");
+    }
+  };
+
+  const actualizarEstadoVehiculo = async (estado) => {
+    if (!vehiculoSeleccionado) return;
+
+    try {
+      await api.patch(`/vehiculos/${vehiculoSeleccionado.id}/`, { estado });
+      cargarVehiculos();
+      setVehiculoSeleccionado((prev) =>
+        prev ? { ...prev, estado } : prev
+      );
+    } catch (error) {
+      console.error("No se pudo actualizar el estado", error);
+      alert("Ocurrió un error al cambiar el estado del vehículo.");
+    }
   };
 
   return (
@@ -307,6 +397,18 @@ function Vehiculos() {
                         >
                           <i className="bi bi-eye-fill"></i>
                         </button>
+                        <button
+                          className="btn btn-outline-primary btn-sm ms-2"
+                          onClick={() => abrirModalEditar(v)}
+                        >
+                          <i className="bi bi-pencil-square"></i>
+                        </button>
+                        <button
+                          className="btn btn-outline-danger btn-sm ms-2"
+                          onClick={() => handleEliminarVehiculo(v.id)}
+                        >
+                          <i className="bi bi-trash"></i>
+                        </button>
                       </td>
                     </tr>
                   ))}
@@ -450,6 +552,160 @@ function Vehiculos() {
         </div>
       </div>
 
+      {/* Modal editar vehículo */}
+      <div
+        className="modal fade"
+        id="editarVehiculoModal"
+        tabIndex="-1"
+        aria-hidden="true"
+      >
+        <div className="modal-dialog">
+          <div className="modal-content border-0 shadow-lg">
+            <div className="modal-header bg-primary text-white">
+              <h5 className="modal-title">
+                <i className="bi bi-pencil-square me-2"></i>
+                Editar vehículo
+              </h5>
+              <button
+                type="button"
+                className="btn-close btn-close-white"
+                data-bs-dismiss="modal"
+                aria-label="Close"
+              ></button>
+            </div>
+
+            <form onSubmit={handleActualizarVehiculo}>
+              <div className="modal-body">
+                {!isCliente && (
+                  <div className="mb-3">
+                    <label className="form-label fw-bold">ID del propietario</label>
+                    <input
+                      type="number"
+                      className="form-control"
+                      placeholder="Ej: 1"
+                      value={vehiculoEditando?.propietario_id || ""}
+                      onChange={(e) =>
+                        setVehiculoEditando({
+                          ...vehiculoEditando,
+                          propietario_id: e.target.value,
+                        })
+                      }
+                    />
+                    <small className="text-muted">
+                      Si lo dejas vacío, se mantiene el propietario actual.
+                    </small>
+                  </div>
+                )}
+
+                <div className="row g-3">
+                  <div className="col-md-6">
+                    <label className="form-label fw-bold">Marca</label>
+                    <input
+                      className="form-control"
+                      placeholder="Marca"
+                      value={vehiculoEditando?.marca || ""}
+                      onChange={(e) =>
+                        setVehiculoEditando({
+                          ...vehiculoEditando,
+                          marca: e.target.value,
+                        })
+                      }
+                      required
+                    />
+                  </div>
+                  <div className="col-md-6">
+                    <label className="form-label fw-bold">Modelo</label>
+                    <input
+                      className="form-control"
+                      placeholder="Modelo"
+                      value={vehiculoEditando?.modelo || ""}
+                      onChange={(e) =>
+                        setVehiculoEditando({
+                          ...vehiculoEditando,
+                          modelo: e.target.value,
+                        })
+                      }
+                      required
+                    />
+                  </div>
+                  <div className="col-md-6">
+                    <label className="form-label fw-bold">Año</label>
+                    <input
+                      className="form-control"
+                      type="number"
+                      min="1900"
+                      max={new Date().getFullYear() + 1}
+                      placeholder="Año"
+                      value={vehiculoEditando?.anio || ""}
+                      onChange={(e) =>
+                        setVehiculoEditando({
+                          ...vehiculoEditando,
+                          anio: e.target.value,
+                        })
+                      }
+                      required
+                    />
+                  </div>
+                  <div className="col-md-6">
+                    <label className="form-label fw-bold">Placa</label>
+                    <input
+                      className="form-control"
+                      placeholder="Placa"
+                      value={vehiculoEditando?.placa || ""}
+                      onChange={(e) =>
+                        setVehiculoEditando({
+                          ...vehiculoEditando,
+                          placa: e.target.value,
+                        })
+                      }
+                      required
+                    />
+                  </div>
+
+                  <div className="col-md-12">
+                    <label className="form-label fw-bold">Estado</label>
+                    <select
+                      className="form-select"
+                      value={vehiculoEditando?.estado || "EN_TALLER"}
+                      onChange={(e) =>
+                        setVehiculoEditando({
+                          ...vehiculoEditando,
+                          estado: e.target.value,
+                        })
+                      }
+                    >
+                      {ESTADOS_OPCIONES.map((opcion) => (
+                        <option key={opcion.value} value={opcion.value}>
+                          {opcion.label}
+                        </option>
+                      ))}
+                    </select>
+                    <small className="text-muted">
+                      Cambiá manualmente si el vehículo está en el taller o fuera de él.
+                    </small>
+                  </div>
+                </div>
+              </div>
+
+              <div className="modal-footer">
+                <button
+                  type="button"
+                  className="btn btn-secondary"
+                  data-bs-dismiss="modal"
+                  onClick={() => setVehiculoEditando(null)}
+                >
+                  Cancelar
+                </button>
+                <button type="submit" className="btn btn-primary">
+                  <i className="bi bi-save me-1"></i>
+                  Actualizar vehículo
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+
       {/* Modal detalle */}
       <div
         className="modal fade"
@@ -495,6 +751,21 @@ function Vehiculos() {
                     <strong>Mora:</strong>{" "}
                     {(vehiculoSeleccionado.dias_mora || 0) + " días"}
                   </p>
+                  <div className="d-flex gap-2 flex-wrap mt-3">
+                    <button
+                      className="btn btn-outline-danger btn-sm"
+                      onClick={() => actualizarEstadoVehiculo("EN_TALLER")}
+                    >
+                      <i className="bi bi-tools me-1"></i> Marcar en taller
+                    </button>
+                    <button
+                      className="btn btn-outline-success btn-sm"
+                      onClick={() => actualizarEstadoVehiculo("EN_SERVICIO")}
+                    >
+                      <i className="bi bi-check2-circle me-1"></i>
+                      Marcar fuera del taller
+                    </button>
+                  </div>
                 </>
               ) : (
                 <p>Cargando...</p>

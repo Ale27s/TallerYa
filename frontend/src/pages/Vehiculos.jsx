@@ -18,10 +18,12 @@ function Vehiculos() {
   });
   const isCliente = user?.rol === "CLIENTE";
 
-  // 🔹 Cargar vehículos desde el backend
+  // ================================================
+  // 🔹 Cargar vehículos desde el backend (GET /vehiculos/)
+  // ================================================
   const cargarVehiculos = () => {
     api
-      .get("/vehiculos/listar/")
+      .get("/vehiculos/")
       .then((res) => setVehiculos(res.data))
       .catch(() => console.log("Error al cargar vehículos"));
   };
@@ -32,25 +34,46 @@ function Vehiculos() {
     cargarVehiculos();
   }, []);
 
+  // ================================================
+  // 🔹 Crear vehículo (POST /vehiculos/)
+  // ================================================
   const handleCrearVehiculo = async (e) => {
     e.preventDefault();
-    try {
-      const payload = { ...nuevoVehiculo };
 
-      if (!payload.propietario_id) {
-        delete payload.propietario_id;
-      } else {
+    try {
+      const payload = {
+        ...nuevoVehiculo,
+        anio: Number(nuevoVehiculo.anio),
+      };
+
+      // Validación obligatoria para quienes NO son cliente
+      if (!isCliente && !payload.propietario_id) {
+        alert("Debes ingresar el ID del propietario.");
+        return;
+      }
+
+      if (payload.propietario_id) {
         payload.propietario_id = Number(payload.propietario_id);
       }
 
-      await api.post("/vehiculos/listar/", payload);
+      await api.post("/vehiculos/", payload);
 
-      setNuevoVehiculo({ marca: "", modelo: "", anio: "", placa: "", propietario_id: "" });
+      // Reset
+      setNuevoVehiculo({
+        marca: "",
+        modelo: "",
+        anio: "",
+        placa: "",
+        propietario_id: "",
+      });
+
       cargarVehiculos();
 
       const modalElement = document.getElementById("crearVehiculoModal");
       if (modalElement) {
-        const modal = Modal.getInstance(modalElement) || Modal.getOrCreateInstance(modalElement);
+        const modal =
+          Modal.getInstance(modalElement) ||
+          Modal.getOrCreateInstance(modalElement);
         modal.hide();
       }
     } catch (error) {
@@ -58,11 +81,14 @@ function Vehiculos() {
     }
   };
 
+  // ================================================
   // 🔹 Filtros + búsqueda
+  // ================================================
   const vehiculosFiltrados = vehiculos.filter((v) => {
     const palabra = busqueda.toLowerCase();
 
-    const coincideEstado = filtroEstado === "TODOS" || v.estado === filtroEstado;
+    const coincideEstado =
+      filtroEstado === "TODOS" || v.estado === filtroEstado;
 
     const coincideBusqueda =
       v.propietario_nombre?.toLowerCase().includes(palabra) ||
@@ -73,10 +99,8 @@ function Vehiculos() {
     return coincideEstado && coincideBusqueda;
   });
 
-  // 🔹 Mostrar modal detalle
   const abrirDetalle = (vehiculo) => {
     setVehiculoSeleccionado(vehiculo);
-
     const modalElement = document.getElementById("detalleModal");
     const modal = Modal.getOrCreateInstance(modalElement);
     modal.show();
@@ -86,7 +110,9 @@ function Vehiculos() {
     <div className="content-wrapper-full">
       <div className="page-container-centered">
 
-        {/* Título */}
+        {/* ============================================ */}
+        {/* TÍTULO */}
+        {/* ============================================ */}
         <h2 className="page-title">
           <i className="bi bi-car-front-fill me-2"></i>
           Gestión de Vehículos
@@ -96,7 +122,9 @@ function Vehiculos() {
           Monitoreá el estado, tiempos y servicios de cada vehículo registrado.
         </p>
 
-        {/* Filtros */}
+        {/* ============================================ */}
+        {/* FILTROS */}
+        {/* ============================================ */}
         <div className="card p-3 shadow-sm border-0 mb-4">
           <div className="row g-3 align-items-center">
             <div className="col-md-5">
@@ -142,6 +170,9 @@ function Vehiculos() {
           </div>
         </div>
 
+        {/* ============================================ */}
+        {/* FORMULARIO "MI VEHÍCULO" SI ES CLIENTE */}
+        {/* ============================================ */}
         {isCliente && (
           <div className="card p-3 shadow-sm border-0 mb-4">
             <h5 className="text-danger fw-bold mb-3">
@@ -196,7 +227,9 @@ function Vehiculos() {
           </div>
         )}
 
-        {/* Tabla */}
+        {/* ============================================ */}
+        {/* TABLA */}
+        {/* ============================================ */}
         <div className="card p-3 shadow-sm border-0">
           {vehiculosFiltrados.length === 0 ? (
             <p className="text-muted text-center mt-3">
@@ -265,7 +298,9 @@ function Vehiculos() {
 
       </div>
 
+      {/* ============================================ */}
       {/* MODAL CREAR VEHÍCULO */}
+      {/* ============================================ */}
       <div
         className="modal fade"
         id="crearVehiculoModal"
@@ -369,7 +404,9 @@ function Vehiculos() {
         </div>
       </div>
 
-      {/* MODAL */}
+      {/* ============================================ */}
+      {/* MODAL DETALLE */}
+      {/* ============================================ */}
       <div
         className="modal fade"
         id="detalleModal"

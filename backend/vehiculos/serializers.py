@@ -14,6 +14,7 @@ class VehiculoSerializer(serializers.ModelSerializer):
         model = Vehiculo
         fields = [
             'id', 'marca', 'modelo', 'anio', 'placa', 'estado',
-            'propietario_nombre', 'propietario_id', 'ingreso', 'entrega_estimada', 'dias_mora'
+            'propietario_nombre', 'propietario_id',
+            'ingreso', 'entrega_estimada', 'dias_mora'
         ]
         read_only_fields = ['estado', 'ingreso', 'entrega_estimada']

@@ -27,6 +27,7 @@ function Login() {
 
       // 👉 Guardamos los datos del usuario
       localStorage.setItem("user", JSON.stringify(user));
+      window.dispatchEvent(new Event("user-updated"));
 
       // 👉 Reiniciamos estados de error
       setMensaje("");

@@ -15,15 +15,24 @@ function Navbar() {
   const isCliente = user?.rol === "CLIENTE";
   const homePath = isCliente ? "/cliente" : "/";
 
-  useEffect(() => {
-    const syncUser = () => {
-      const stored = localStorage.getItem("user");
-      setUser(stored ? JSON.parse(stored) : null);
-    };
+  const syncUser = () => {
+    const stored = localStorage.getItem("user");
+    setUser(stored ? JSON.parse(stored) : null);
+  };
 
+  useEffect(() => {
+    syncUser();
     window.addEventListener("storage", syncUser);
-    return () => window.removeEventListener("storage", syncUser);
+    window.addEventListener("user-updated", syncUser);
+    return () => {
+      window.removeEventListener("storage", syncUser);
+      window.removeEventListener("user-updated", syncUser);
+    };
   }, []);
+
+  useEffect(() => {
+    syncUser();
+  }, [location]);
 
   useEffect(() => {
     document.body.setAttribute("data-bs-theme", darkMode ? "dark" : "light");
@@ -68,8 +77,10 @@ function Navbar() {
   };
 
   const handleLogout = () => {
+    localStorage.removeItem("token");
     localStorage.removeItem("user");
     setUser(null);
+    window.dispatchEvent(new Event("user-updated"));
     navigate("/login");
   };
 

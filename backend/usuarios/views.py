@@ -9,6 +9,9 @@ from rest_framework_simplejwt.tokens import RefreshToken
 # Permisos por rol
 from usuarios.permissions import RolRequerido
 
+from django.views.decorators.csrf import csrf_exempt
+from django.utils.decorators import method_decorator
+
 
 # ====================================================
 # 🔐 REGISTRO
@@ -59,23 +62,27 @@ class RegisterView(views.APIView):
 # ====================================================
 # 🔐 LOGIN CON JWT
 # ====================================================
+from django.contrib.auth import get_user_model
+Usuario = get_user_model()
+
 class LoginView(views.APIView):
     permission_classes = [AllowAny]
 
     def post(self, request):
-        # 🔎 Permitimos ingresar con nombre de usuario **o** correo electrónico
-        identificador = request.data.get("username") or request.data.get("email")
+        identificador = request.data.get("identificador")
         password = request.data.get("password")
 
         if not identificador or not password:
             return Response({"message": "Faltan credenciales"}, status=400)
 
-        # Si el usuario escribe un correo, buscamos el username asociado
-        username = identificador
+        # Detectar si es correo
         if "@" in identificador:
             usuario = Usuario.objects.filter(email=identificador).first()
-            if usuario:
-                username = usuario.username
+            if not usuario:
+                return Response({"message": "Correo no encontrado"}, status=401)
+            username = usuario.username
+        else:
+            username = identificador
 
         user = authenticate(username=username, password=password)
 
@@ -90,7 +97,6 @@ class LoginView(views.APIView):
             "refresh": str(refresh),
             "user": UsuarioSerializer(user).data
         })
-
 
 # ====================================================
 # 🚪 LOGOUT

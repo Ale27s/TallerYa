@@ -16,6 +16,7 @@ function Vehiculos() {
     open: false,
     vehiculoId: null,
   });
+  const [clientes, setClientes] = useState([]);
 
   const [nuevoVehiculo, setNuevoVehiculo] = useState({
     marca: "",
@@ -46,10 +47,18 @@ function Vehiculos() {
       });
   };
 
+  const cargarClientes = () => {
+    api
+      .get("/clientes/")
+      .then((res) => setClientes(res.data))
+      .catch((err) => console.error("Error al cargar clientes", err));
+  };
+
   useEffect(() => {
     const stored = localStorage.getItem("user");
     setUser(stored ? JSON.parse(stored) : null);
     cargarVehiculos();
+    cargarClientes();
   }, []);
 
   // ===============================
@@ -376,9 +385,9 @@ function Vehiculos() {
                   </tr>
                 </thead>
                 <tbody>
-                  {vehiculosFiltrados.map((v) => (
+                  {vehiculosFiltrados.map((v, index) => (
                     <tr key={v.id}>
-                      <td>{v.id}</td>
+                      <td>{index + 1}</td>
                       <td>{v.propietario_nombre || "—"}</td>
                       <td>{v.marca}</td>
                       <td>{v.modelo}</td>
@@ -456,12 +465,10 @@ function Vehiculos() {
                 {!isCliente && (
                   <div className="mb-3">
                     <label className="form-label fw-bold">
-                      ID del propietario
+                      Propietario
                     </label>
-                    <input
-                      type="number"
-                      className="form-control"
-                      placeholder="Ej: 1"
+                    <select
+                      className="form-select"
                       value={nuevoVehiculo.propietario_id}
                       onChange={(e) =>
                         setNuevoVehiculo({
@@ -470,9 +477,16 @@ function Vehiculos() {
                         })
                       }
                       required
-                    />
+                    >
+                      <option value="">Seleccioná un cliente</option>
+                      {clientes.map((cliente) => (
+                        <option key={cliente.id} value={cliente.id}>
+                          {cliente.nombre} — {cliente.identificacion}
+                        </option>
+                      ))}
+                    </select>
                     <small className="text-muted">
-                      El vehículo se registrará asociado a este usuario.
+                      Solo se listan clientes registrados.
                     </small>
                   </div>
                 )}
@@ -588,11 +602,9 @@ function Vehiculos() {
               <div className="modal-body">
                 {!isCliente && (
                   <div className="mb-3">
-                    <label className="form-label fw-bold">ID del propietario</label>
-                    <input
-                      type="number"
-                      className="form-control"
-                      placeholder="Ej: 1"
+                    <label className="form-label fw-bold">Propietario</label>
+                    <select
+                      className="form-select"
                       value={vehiculoEditando?.propietario_id || ""}
                       onChange={(e) =>
                         setVehiculoEditando({
@@ -600,9 +612,16 @@ function Vehiculos() {
                           propietario_id: e.target.value,
                         })
                       }
-                    />
+                    >
+                      <option value="">Mantener propietario actual</option>
+                      {clientes.map((cliente) => (
+                        <option key={cliente.id} value={cliente.id}>
+                          {cliente.nombre} — {cliente.identificacion}
+                        </option>
+                      ))}
+                    </select>
                     <small className="text-muted">
-                      Si lo dejas vacío, se mantiene el propietario actual.
+                      Solo se listan clientes registrados.
                     </small>
                   </div>
                 )}

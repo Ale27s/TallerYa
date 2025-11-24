@@ -1,4 +1,5 @@
 from rest_framework import generics
+from rest_framework.exceptions import ValidationError
 from rest_framework.permissions import IsAuthenticated
 from .serializers import VehiculoSerializer
 from django.http import HttpResponse
@@ -22,6 +23,10 @@ class VehiculoListCreateView(generics.ListCreateAPIView):
         if getattr(user, 'rol', None) == 'CLIENTE':
             serializer.save(propietario=user)
         else:
+            propietario = serializer.validated_data.get('propietario')
+            if not propietario:
+                raise ValidationError({'propietario_id': 'Debes indicar el propietario del vehículo.'})
+
             serializer.save()
 
 

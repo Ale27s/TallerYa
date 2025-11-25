@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Factura, DetalleFactura
+from .models import Factura, DetalleFactura, Ingreso
 
 class DetalleFacturaSerializer(serializers.ModelSerializer):
     subtotal = serializers.SerializerMethodField()
@@ -29,4 +29,22 @@ class FacturaSerializer(serializers.ModelSerializer):
             'estado',
             'metodo_pago',
             'detalles'
+        ]
+
+
+class IngresoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Ingreso
+        fields = [
+            'id',
+            'fecha',
+            'cliente',
+            'contacto',
+            'vehiculo',
+            'placa',
+            'trabajo',
+            'costo',
+            'estado',
+            'notas',
+            'creado_en'
         ]

@@ -1,7 +1,9 @@
+
 .ingresos-page.content-wrapper {
-  background: radial-gradient(circle at 10% 20%, rgba(255, 225, 225, 0.4), transparent 30%),
-    radial-gradient(circle at 90% 10%, rgba(231, 76, 60, 0.15), transparent 35%),
-    #f8f9fa;
+  background: radial-gradient(circle at 12% 20%, rgba(217, 70, 239, 0.08), transparent 28%),
+    radial-gradient(circle at 88% 18%, rgba(14, 165, 233, 0.12), transparent 32%),
+    radial-gradient(circle at 50% 100%, rgba(220, 38, 38, 0.06), transparent 40%),
+    #f4f6fb;
   min-height: calc(100vh - 80px);
   padding: 2rem;
 }
@@ -24,31 +26,46 @@
   justify-content: center;
   border-radius: 50%;
   font-size: 1.1rem;
+  background: #eef2ff;
+  color: #0f172a;
 }
 
 .ingresos-page .ingreso-form-card {
-  background: linear-gradient(135deg, #ffffff 0%, #fff7f7 100%);
-  border: 1px solid #f3dcdc !important;
+  background: linear-gradient(145deg, #ffffff 0%, #f0f4ff 100%);
+  border: 1px solid #d7e3ff !important;
 }
 
 .ingresos-page .stat-card {
   border-radius: 14px;
-  background: #ffffff;
+  background: linear-gradient(135deg, #0f172a, #1e293b);
+  color: #e5e7eb;
   padding: 1rem;
-  border: 1px solid #f1f1f1;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.25);
+}
+
+.ingresos-page .stat-card.accent-card {
+  background: linear-gradient(135deg, #ef4444, #b91c1c);
+  color: #fff;
+  border-color: transparent;
+}
+
+.ingresos-page .stat-card.accent-card .icon-circle {
+  background: rgba(255, 255, 255, 0.12);
+  color: #fff;
 }
 
 .ingresos-page .mini-card {
-  border: 1px dashed #e8e8e8;
+  border: 1px dashed #d7e0ec;
   border-radius: 12px;
   padding: 0.75rem 1rem;
-  background: #fff;
+  background: #f8fafc;
   transition: transform 0.1s ease, box-shadow 0.2s ease;
 }
 
 .ingresos-page .mini-card:hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
 }
 
 .ingresos-page .table > :not(caption) > * > * {
@@ -57,6 +74,11 @@
 
 .ingresos-page .badge {
   letter-spacing: 0.2px;
+}
+
+.ingresos-page thead tr {
+  background: #0f172a;
+  color: #e5e7eb;
 }
 
 @media (max-width: 768px) {

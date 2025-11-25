@@ -1,7 +1,7 @@
 from rest_framework import generics
 from rest_framework.permissions import IsAuthenticated
-from .models import Factura, DetalleFactura
-from .serializers import FacturaSerializer, DetalleFacturaSerializer
+from .models import Factura, DetalleFactura, Ingreso
+from .serializers import FacturaSerializer, DetalleFacturaSerializer, IngresoSerializer
 from django.shortcuts import get_object_or_404
 from reportlab.pdfgen import canvas
 from django.http import HttpResponse
@@ -45,3 +45,9 @@ def factura_pdf(request, pk):
     p.showPage()
     p.save()
     return response
+
+
+class IngresoListCreateView(generics.ListCreateAPIView):
+    permission_classes = [IsAuthenticated]
+    serializer_class = IngresoSerializer
+    queryset = Ingreso.objects.all()

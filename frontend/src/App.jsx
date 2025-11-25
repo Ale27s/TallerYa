@@ -16,6 +16,7 @@ import Mecanico from "./pages/Mecanico.jsx";
 import Citas from "./pages/Citas.jsx";
 import Facturacion from "./pages/Facturacion.jsx";
 import Vehiculos from "./pages/Vehiculos.jsx";
+import Ingresos from "./pages/Ingresos.jsx";
 import Login from "./pages/Login.jsx";
 import Register from "./pages/Register.jsx";
 import ClienteHome from "./pages/ClienteHome.jsx";
@@ -51,6 +52,7 @@ function Layout() {
       <Route path="/citas" element={<Citas />} />
       <Route path="/facturacion" element={<Facturacion />} />
       <Route path="/vehiculos" element={<Vehiculos />} />
+      <Route path="/ingresos" element={<Ingresos />} />
 
       {/* Extras */}
       <Route path="/prices" element={<Prices />} />

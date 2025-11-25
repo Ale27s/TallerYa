@@ -92,6 +92,7 @@ function Navbar() {
 
     if (!isCliente) {
       baseLinks.push({ label: "Facturación", to: "/facturacion" });
+      baseLinks.push({ label: "Ingresos", to: "/ingresos" });
     }
 
     return baseLinks;
@@ -108,6 +109,7 @@ function Navbar() {
       { label: "Citas", to: "/citas" },
       { label: "Vehículos", to: "/vehiculos" },
       { label: "Facturación", to: "/facturacion" },
+      { label: "Ingresos", to: "/ingresos" },
     ];
   }, [isCliente, isLogged]);
 

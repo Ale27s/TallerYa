@@ -4,10 +4,11 @@ import "./Ingresos.css";
 import api from "../services/api";
 
 const formatCurrency = (value) =>
-  new Intl.NumberFormat("es-AR", {
+  new Intl.NumberFormat("es-PY", {
     style: "currency",
-    currency: "ARS",
-    minimumFractionDigits: 2,
+    currency: "PYG",
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0,
   }).format(Number(value) || 0);
 
 const estadosIngreso = [

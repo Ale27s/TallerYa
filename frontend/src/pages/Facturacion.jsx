@@ -106,10 +106,11 @@ function Facturacion() {
   const totalFactura = baseImponible + ivaTotal;
 
   const formatCurrency = (value) =>
-    new Intl.NumberFormat("es-ES", {
+    new Intl.NumberFormat("es-PY", {
       style: "currency",
-      currency: "EUR",
-      minimumFractionDigits: 2,
+      currency: "PYG",
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0,
     }).format(Number(value) || 0);
 
   const guardarFactura = async () => {

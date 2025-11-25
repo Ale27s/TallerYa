@@ -204,6 +204,18 @@ class ListaPersonalView(views.APIView):
 
 
 # ====================================================
+# 👥 LISTA DE CLIENTES (USUARIOS CON ROL CLIENTE)
+# ====================================================
+class ListaClientesView(views.APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        clientes = Usuario.objects.filter(rol="CLIENTE")
+        serializer = UsuarioSerializer(clientes, many=True)
+        return Response(serializer.data)
+
+
+# ====================================================
 # ❌ ELIMINAR PERSONAL (SOLO JEFE)
 # ====================================================
 class EliminarPersonalView(views.APIView):

@@ -49,7 +49,7 @@ function Vehiculos() {
 
   const cargarClientes = () => {
     api
-      .get("/clientes/")
+      .get("/auth/clientes/")
       .then((res) => setClientes(res.data))
       .catch((err) => console.error("Error al cargar clientes", err));
   };
@@ -479,11 +479,14 @@ function Vehiculos() {
                       required
                     >
                       <option value="">Seleccioná un cliente</option>
-                      {clientes.map((cliente) => (
-                        <option key={cliente.id} value={cliente.id}>
-                          {cliente.nombre} — {cliente.identificacion}
-                        </option>
-                      ))}
+                      {clientes.map((cliente) => {
+                        const contacto = cliente.telefono || cliente.email || "Sin contacto";
+                        return (
+                          <option key={cliente.id} value={cliente.id}>
+                            {cliente.username} — {contacto}
+                          </option>
+                        );
+                      })}
                     </select>
                     <small className="text-muted">
                       Solo se listan clientes registrados.
@@ -614,11 +617,14 @@ function Vehiculos() {
                       }
                     >
                       <option value="">Mantener propietario actual</option>
-                      {clientes.map((cliente) => (
-                        <option key={cliente.id} value={cliente.id}>
-                          {cliente.nombre} — {cliente.identificacion}
-                        </option>
-                      ))}
+                      {clientes.map((cliente) => {
+                        const contacto = cliente.telefono || cliente.email || "Sin contacto";
+                        return (
+                          <option key={cliente.id} value={cliente.id}>
+                            {cliente.username} — {contacto}
+                          </option>
+                        );
+                      })}
                     </select>
                     <small className="text-muted">
                       Solo se listan clientes registrados.

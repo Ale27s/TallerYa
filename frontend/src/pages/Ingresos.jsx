@@ -31,6 +31,8 @@ const registroBase = () => ({
 function Ingresos() {
   const [nuevoIngreso, setNuevoIngreso] = useState(registroBase);
   const [ingresos, setIngresos] = useState([]);
+  const [clientes, setClientes] = useState([]);
+  const [vehiculos, setVehiculos] = useState([]);
   const [cargando, setCargando] = useState(true);
   const [error, setError] = useState("");
 
@@ -51,6 +53,24 @@ function Ingresos() {
     cargarIngresos();
   }, [cargarIngresos]);
 
+  useEffect(() => {
+    const cargarClientesYVehiculos = async () => {
+      try {
+        const [clientesRes, vehiculosRes] = await Promise.all([
+          api.get("/clientes/"),
+          api.get("/vehiculos/"),
+        ]);
+
+        setClientes(clientesRes.data || []);
+        setVehiculos(vehiculosRes.data || []);
+      } catch (err) {
+        console.error("No se pudieron cargar clientes o vehículos", err);
+      }
+    };
+
+    cargarClientesYVehiculos();
+  }, []);
+
   const totalCobrado = useMemo(
     () => ingresos.filter((i) => i.estado === "COBRADO").reduce((acc, i) => acc + Number(i.costo || 0), 0),
     [ingresos],
@@ -68,6 +88,18 @@ function Ingresos() {
 
   const handleChange = (campo, valor) => {
     setNuevoIngreso((prev) => ({ ...prev, [campo]: valor }));
+  };
+
+  const handleVehiculoSeleccion = (placaSeleccionada) => {
+    const encontrado = vehiculos.find((v) => v.placa === placaSeleccionada);
+
+    setNuevoIngreso((prev) => ({
+      ...prev,
+      placa: placaSeleccionada,
+      vehiculo: encontrado
+        ? `${encontrado.marca || ""} ${encontrado.modelo || ""}`.trim()
+        : placaSeleccionada,
+    }));
   };
 
   const registrarIngreso = async (e) => {
@@ -160,13 +192,18 @@ function Ingresos() {
 
                   <div>
                     <label className="form-label small text-muted">Cliente</label>
-                    <input
-                      type="text"
-                      className="form-control"
-                      placeholder="Nombre y apellido"
+                    <select
+                      className="form-select"
                       value={nuevoIngreso.cliente}
                       onChange={(e) => handleChange("cliente", e.target.value)}
-                    />
+                    >
+                      <option value="">Seleccioná un cliente registrado</option>
+                      {clientes.map((cliente) => (
+                        <option key={cliente.id} value={cliente.nombre}>
+                          {cliente.nombre}
+                        </option>
+                      ))}
+                    </select>
                   </div>
 
                   <div className="row g-3">
@@ -182,13 +219,18 @@ function Ingresos() {
                     </div>
                     <div className="col-md-6">
                       <label className="form-label small text-muted">Vehículo</label>
-                      <input
-                        type="text"
-                        className="form-control"
-                        placeholder="Marca y modelo"
-                        value={nuevoIngreso.vehiculo}
-                        onChange={(e) => handleChange("vehiculo", e.target.value)}
-                      />
+                      <select
+                        className="form-select"
+                        value={nuevoIngreso.placa}
+                        onChange={(e) => handleVehiculoSeleccion(e.target.value)}
+                      >
+                        <option value="">Seleccioná un vehículo registrado</option>
+                        {vehiculos.map((vehiculo) => (
+                          <option key={vehiculo.id} value={vehiculo.placa}>
+                            {vehiculo.placa} • {vehiculo.marca} {vehiculo.modelo}
+                          </option>
+                        ))}
+                      </select>
                     </div>
                   </div>
 

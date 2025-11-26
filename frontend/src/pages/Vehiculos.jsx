@@ -49,7 +49,7 @@ function Vehiculos() {
 
   const cargarClientes = () => {
     api
-      .get("/auth/clientes/")
+      .get("/clientes/")
       .then((res) => setClientes(res.data))
       .catch((err) => console.error("Error al cargar clientes", err));
   };
@@ -483,7 +483,7 @@ function Vehiculos() {
                         const contacto = cliente.telefono || cliente.email || "Sin contacto";
                         return (
                           <option key={cliente.id} value={cliente.id}>
-                            {cliente.username} — {contacto}
+                            {cliente.nombre} — {contacto}
                           </option>
                         );
                       })}
@@ -621,7 +621,7 @@ function Vehiculos() {
                         const contacto = cliente.telefono || cliente.email || "Sin contacto";
                         return (
                           <option key={cliente.id} value={cliente.id}>
-                            {cliente.username} — {contacto}
+                            {cliente.nombre} — {contacto}
                           </option>
                         );
                       })}

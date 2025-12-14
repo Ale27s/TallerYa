@@ -50,13 +50,14 @@ function Contact() {
                   </Marker>
                 </MapContainer>
               </div>
- <div className="contact-info">
+
+              <div className="contact-info">
                 <h5 className="text-uppercase fw-bold mb-3 text-danger">TallerYa Garage</h5>
                 <p className="mb-4">
                   8901 Marmora Road, Glasgow, D04 89GR
                   <br />
                   San Lorenzo, Paraguay
-</p>
+                </p>
                 <ul className="contact-info__list list-unstyled mb-0">
                   <li>
                     <i className="bi bi-telephone-fill me-2"></i>
@@ -74,12 +75,15 @@ function Contact() {
               </div>
             </div>
           </div>
- <div className="col-12 col-lg-6">
+
+          <div className="col-12 col-lg-6">
             <form onSubmit={handleSubmit} className="contact-card contact-card--form h-100">
               <div className="mb-3">
                 <label className="form-label">Nombre</label>
                 <input
- value={form.nombre}
+                  type="text"
+                  className="form-control contact-input"
+                  value={form.nombre}
                   onChange={(e) => setForm({ ...form, nombre: e.target.value })}
                   placeholder="Ingresa tu nombre"
                   required
@@ -88,7 +92,8 @@ function Contact() {
               <div className="mb-3">
                 <label className="form-label">Teléfono</label>
                 <input
-className="form-control contact-input"
+                  type="tel"
+                  className="form-control contact-input"
                   value={form.telefono}
                   onChange={(e) => setForm({ ...form, telefono: e.target.value })}
                   placeholder="Número de contacto"
@@ -99,17 +104,17 @@ className="form-control contact-input"
                 <label className="form-label">Correo</label>
                 <input
                   type="email"
-className="form-control contact-input"
+                  className="form-control contact-input"
                   value={form.email}
                   onChange={(e) => setForm({ ...form, email: e.target.value })}
                   placeholder="tu@email.com"
                   required
                 />
               </div>
-<div className="mb-4">
+              <div className="mb-4">
                 <label className="form-label">Mensaje</label>
                 <textarea
-rows="4"
+                  rows="4"
                   className="form-control contact-input"
                   value={form.mensaje}
                   onChange={(e) => setForm({ ...form, mensaje: e.target.value })}
@@ -117,7 +122,8 @@ rows="4"
                   required
                 />
               </div>
-<div className="contact-recaptcha mb-4">
+
+              <div className="contact-recaptcha mb-4">
                 <div className="contact-recaptcha__checkbox">
                   <input type="checkbox" id="robotCheck" />
                   <label htmlFor="robotCheck">No soy un robot</label>
@@ -138,10 +144,8 @@ rows="4"
           </div>
         </div>
       </div>
-</section>
+    </section>
   );
 }
 
 export default Contact;
-
-

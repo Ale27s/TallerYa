@@ -61,7 +61,7 @@ function Citas() {
     cargarCitas();
     if (user?.rol === "CLIENTE") {
       axios
-        .get("http://127.0.0.1:8000/api/vehiculos/listar/", { withCredentials: true })
+        .get("http://127.0.0.1:8000/api/vehiculos/", { withCredentials: true })
         .then((res) => setVehiculosCliente(res.data))
         .catch(() => setVehiculosCliente([]));
     }

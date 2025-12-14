@@ -76,14 +76,12 @@ function Vehiculos() {
     };
 
     // 🔥 ASIGNAR PROPIETARIO CORRECTAMENTE
-    if (isCliente) {
-      payload.propietario = user.id;
-    } else {
+    if (!isCliente) {
       if (!nuevoVehiculo.propietario_id) {
         alert("Debes seleccionar un propietario");
         return;
       }
-      payload.propietario = Number(nuevoVehiculo.propietario_id);
+      payload.propietario_id = Number(nuevoVehiculo.propietario_id);
     }
 
     await api.post("/vehiculos/", payload);

@@ -65,53 +65,52 @@ function Vehiculos() {
   // Crear vehículo
   // ===============================
   const handleCrearVehiculo = async (e) => {
-    e.preventDefault();
+  e.preventDefault();
 
-    try {
-      const payload = {
-        ...nuevoVehiculo,
-        anio: Number(nuevoVehiculo.anio),
-      };
+  try {
+    const payload = {
+      marca: nuevoVehiculo.marca,
+      modelo: nuevoVehiculo.modelo,
+      anio: Number(nuevoVehiculo.anio),
+      placa: nuevoVehiculo.placa,
+    };
 
-      // Si no es cliente, el propietario_id es obligatorio
-      if (!isCliente && !payload.propietario_id) {
-        alert("Debes ingresar el ID del propietario.");
+    // 🔥 ASIGNAR PROPIETARIO CORRECTAMENTE
+    if (isCliente) {
+      payload.propietario = user.id;
+    } else {
+      if (!nuevoVehiculo.propietario_id) {
+        alert("Debes seleccionar un propietario");
         return;
       }
-
-      // Si viene vacío, lo sacamos del payload (para clientes)
-      if (!payload.propietario_id) {
-        delete payload.propietario_id;
-      } else {
-        payload.propietario_id = Number(payload.propietario_id);
-      }
-
-      await api.post("/vehiculos/", payload);
-
-      // Reset form
-      setNuevoVehiculo({
-        marca: "",
-        modelo: "",
-        anio: "",
-        placa: "",
-        propietario_id: "",
-      });
-
-      cargarVehiculos();
-
-      // Cerrar modal
-      const modalElement = document.getElementById("crearVehiculoModal");
-      if (modalElement) {
-        const modal =
-          Modal.getInstance(modalElement) ||
-          Modal.getOrCreateInstance(modalElement);
-        modal.hide();
-      }
-    } catch (error) {
-      console.error("No se pudo registrar el vehículo", error);
-      alert("Ocurrió un error al registrar el vehículo.");
+      payload.propietario = Number(nuevoVehiculo.propietario_id);
     }
-  };
+
+    await api.post("/vehiculos/", payload);
+
+    setNuevoVehiculo({
+      marca: "",
+      modelo: "",
+      anio: "",
+      placa: "",
+      propietario_id: "",
+    });
+
+    cargarVehiculos();
+
+    const modalElement = document.getElementById("crearVehiculoModal");
+    if (modalElement) {
+      const modal =
+        Modal.getInstance(modalElement) ||
+        Modal.getOrCreateInstance(modalElement);
+      modal.hide();
+    }
+  } catch (error) {
+    console.error("No se pudo registrar el vehículo", error.response?.data);
+    alert("Ocurrió un error al registrar el vehículo");
+  }
+};
+
 
   // ===============================
   // Filtros + búsqueda

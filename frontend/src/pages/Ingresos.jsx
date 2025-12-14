@@ -250,7 +250,7 @@ function Ingresos() {
                     <div className="col-md-6">
                       <label className="form-label small text-muted">Monto cobrado *</label>
                       <div className="input-group">
-                        <span className="input-group-text">$</span>
+                        <span className="input-group-text">₲</span>
                         <input
                           type="number"
                           min="0"
